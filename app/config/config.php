@@ -1,15 +1,17 @@
 <?php
+ $config = parse_ini_file($_SERVER['DOCUMENT_ROOT']. "/config.ini");
+ //print_r($config);
   // DB Params
-  define('DB_HOST', 'localhost');
-  define('DB_USER', 'root');
-  define('DB_PASS', '');
-  define('DB_NAME', 'go_records');
+  define('DB_HOST', $config["dbhost"]);
+  define('DB_USER', $config["dbuser"]);
+  define('DB_PASS', $config["dbpass"]);
+  define('DB_NAME', $config["dbname"]);
   //echo $_SERVER['DOCUMENT_ROOT'];
   
   // App Root
   define('APPROOT', dirname(dirname(__FILE__)));
 
-  $config = parse_ini_file(APPROOT . "/config.ini");
+ 
   $GLOBALS["urlroot"] = $config["urlroot"];
   // URL Root
   define('URLROOT', $GLOBALS["urlroot"]);

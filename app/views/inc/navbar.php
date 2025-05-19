@@ -1,5 +1,5 @@
 <header>
-    <nav id="mainNav" class="navbar navbar-expand-md navbar-shrink py-3">
+    <nav id="mainNav" class="navbar navbar-expand-md navbar-shrink  fixed-top py-3">
     <div class="container"><a class="navbar-brand d-flex align-items-center" href="/"><span>Go Knows Lifeline</span></a><button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
         <div id="navcol-1" class="collapse navbar-collapse">
             <ul class="navbar-nav mx-auto">
