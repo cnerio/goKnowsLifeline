@@ -1,10 +1,10 @@
 <?php
-  class States extends Controller {
+  class Enrolls extends Controller {
     public function __construct(){
      
     }
     
-    public function index(){
+    public function index2(){
       // if(isLoggedIn()){
       //   redirect('posts');
       // }
@@ -21,13 +21,13 @@
       $this->view('pages/index', $data);
     }
 
-    public function all(){
+    public function index(){
       $data = [
         'title' => 'About Us',
         'description' => 'App to share posts with other users'
       ];
 
-      $this->view('states/all', $data);
+      $this->view('enrolls/index', $data);
     }
 
     public function ca(){
@@ -41,6 +41,18 @@
           'mail' => 'emmizy2015@gmail.com'
       ];
 
-      $this->view('states/ca', $data);
+      $this->view('enrolls/ca', $data);
+    }
+
+    public function check(){
+      //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+          $data=[
+            "email"=>trim(strtolower($_POST['email'])),
+            "zipcode"=>trim($_POST['zipcode']),
+            "status"=>"success"
+          ];
+          echo json_encode($data);
+        }
     }
   }
