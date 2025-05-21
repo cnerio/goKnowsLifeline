@@ -22,4 +22,10 @@ class Enroll {
             return $result;
         }
 
+    public function saveData($data,$table){
+        $this->db->insertQuery($table,$data);
+        $id=$this->db->lastinsertedId();
+        return $id;
+    }
+
 }

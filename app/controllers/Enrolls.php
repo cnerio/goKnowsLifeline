@@ -45,6 +45,42 @@
       $this->view('enrolls/ca', $data);
     }
 
+    public function savestep1(){
+      if($_SERVER['REQUEST_METHOD']=='POST'){
+        $phonenumber = preg_replace('/[^0-9]/', '', $_POST['phone']);
+        $dob = date('Y-m-d', strtotime($_POST['dobY']."-".$_POST['dobD']."-".$_POST['dobM']));
+        $data=[
+          "first_name"=>trim(ucfirst(strtolower($_POST['firstname']))),
+          "second_name"=>trim(ucfirst(strtolower($_POST['lastname']))),
+          "ssn"=>trim($_POST['ssn']),
+          "dob"=>$dob,
+          "email"=>trim($_POST['email']),
+          "phone_number"=>$phonenumber,
+          "address1"=>trim($_POST['address1']),
+          "address2"=>trim($_POST['addess2']),
+          "city"=>$_POST['city'],
+          "state"=>$_POST['state'],
+          "zipcode"=>$_POST['zipcode'],
+          "shipping_address1"=>(isset($_POST['shipaddress1'])?$_POST['shipaddress1']:""),
+          "shipping_address2"=>(isset($_POST['shipaddess2']))?$_POST['shipaddess2']:"",
+          "shipping_city"=>(isset($_POST['shipcity']))?$_POST['shipcity']:"", 
+          "shipping_state"=>(isset($_POST['shipstate']))?$_POST['shipstate']:"", 
+          "shipping_zipcode"=>(isset($_POST['shipzipcode']))?$_POST['shipzipcode']:"",
+          "order_step"=>"Step 1"
+        ];
+        $lastId = $this->enrollModel->saveData($data,'lifeline_records');
+        
+        if($lastId>0){
+          $data['lastId']=$lastId;
+          $data['status']="success";
+        }else{
+          $data['status']="fail";
+        }
+        //print_r($data);
+        echo json_encode($data);
+      }
+    }
+
     public function check(){
       //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
         if($_SERVER['REQUEST_METHOD'] == 'POST'){

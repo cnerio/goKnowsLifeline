@@ -401,25 +401,10 @@
 <?php require APPROOT . '/views/inc/footer.php'; ?>
 
 <script>
+    let columnId;
     $(document).ready(function() {
         $(".phoneUs").mask('(000) 000-0000');
         $(".zipcode").mask('00000');
-        //setInterval(getDatetime, 1000);
-        // $.validator.addMethod("validDate", function(value, element, params) {
-        //     var day = $('#dobD').val();
-        //     var month = $('#dobM').val();
-        //     var year = $('#dobY').val();
-            
-        //     // Concatenate day, month, and year into a date string
-        //     var date = new Date(year + '-' + month + '-' + day);
-            
-        //     // Check if the date is valid
-        //     if (date.getFullYear() == year && (date.getMonth() + 1) == month && date.getDate() == day) {
-        //     return true;
-        //     } else {
-        //     return false;
-        //     }
-        // }, "Invalid date");
     });
     var form = $("#enrollForm");
     form.validate({
@@ -510,8 +495,34 @@
             if (form.valid() === true) {
                 
                 if (currentIndex === 0) {
-                    canProceed = true;
-                    getlifelineprograms();
+                    let step1Data = $("#enrollForm-p-0 :input").serialize();
+                    let dob = $("#dobY").val()+"-"+$("#dobM").val()+"-"+$("#dobD").val();
+                    $.ajax({
+                        url: "<?php echo URLROOT; ?>/enrolls/savestep1",
+                        method: "POST",
+                        data: step1Data,
+                        async: false, // block navigation until response
+                        success: function(response) {
+                            console.log("Step " + currentIndex + " saved.");
+                            console.log(response);
+                            canProceed=false;
+                            var myObj = JSON.parse(response)
+                            if (myObj.status == "fail") {
+                                canProceed = false;
+                                $("#checkmessage").html("<p style='color:red'>Sorry!, Unfortunatelly we can't provide services for this zipcode area, but we will email you when our service it's available on you area</p>")
+                            } else {
+                                columnId=myObj.lastId;
+                                canProceed = true;
+                                getlifelineprograms();
+                            }
+
+
+                        },
+                        error: function() {
+                            alert("Error saving step " + currentIndex);
+                        }
+                    });
+
                 } else if (currentIndex === 1) {                    
                     canProceed = true;
                     let firstname = $("#firstname").val();
@@ -535,13 +546,6 @@
             alert("Submitted!");
         }
     });
-
-    // $('.zipcode').on('blur', function () {
-    //   let val = $(this).val().trim();
-    //   if (/^\d{4}$/.test(val)) {
-    //     $(this).val(val.padStart(5, '0'));
-    //   }
-    // });
 
     $('#showShip').on('click', function() {
         $('#shipArea').toggle(); // Or use slideToggle() for animation
@@ -658,22 +662,6 @@
       previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn">Remove</button>`;
 
       $('#preview').html(previewHtml);
-
-      // OPTIONAL: Send via AJAX
-    //   $.ajax({
-    //     url: 'your_upload_endpoint.php',
-    //     method: 'POST',
-    //     data: {
-    //       filename: uploadedFileName,
-    //       filedata: base64String
-    //     },
-    //     success: function (response) {
-    //       console.log('Upload success:', response);
-    //     },
-    //     error: function (xhr, status, error) {
-    //       console.error('Upload error:', error);
-    //     }
-    //   });
     };
 
     reader.readAsDataURL(file);
@@ -688,33 +676,5 @@
     $('#fileInput').val(""); // Clear file input
   });
 
-// document.getElementById('uploadBtn').addEventListener('click', function () {
-//   document.getElementById('fileInput').click();
-// });
-
-// document.getElementById('fileInput').addEventListener('change', function () {
-//   const file = this.files[0];
-//   if (!file) return;
-
-//   const reader = new FileReader();
-
-//   reader.onload = function () {
-//     const base64String = reader.result;
-//     console.log("Base64:", base64String);
-
-//     // OPTIONAL: preview image if it's an image
-//     if (file.type.startsWith('image/')) {
-//       const img = document.createElement('img');
-//       img.src = base64String;
-//       img.style.maxWidth = '200px';
-//       document.getElementById('preview').innerHTML = '';
-//       document.getElementById('preview').appendChild(img);
-//     } else {
-//       document.getElementById('preview').innerHTML = `<p>File loaded: ${file.name}</p>`;
-//     }
-//   };
-
-//   reader.readAsDataURL(file); // Convert to Base64
-// });
 
 </script>
