@@ -74,7 +74,17 @@
 
 .wizard > .steps > ul > li
 {
-    width: 25%;
+    /*width: 25%;*/
+    width:33.3%;
+}
+
+@media screen and (max-width:525px) {
+  /* CSS rules go here */
+  .wizard > .steps > ul > li
+{
+    /*width: 25%;*/
+    width:100%;
+}
 }
 
 .wizard > .steps > ul > li,
@@ -198,7 +208,7 @@
     display: inline-block;
 }
 
-.wizard > .content > .body input.error
+.wizard > .content > .body input.error,select.error
 {
     background: rgb(251, 227, 228);
     border: 1px solid #fbc2c4;
@@ -215,7 +225,8 @@
 {
     color: #8a1f11;
     display: inline-block;
-    margin-left: 1.5em;
+    /*margin-left: 1.5em;*/
+    font-size:12px;
 }
 
 .wizard > .actions

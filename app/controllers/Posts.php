@@ -1,6 +1,7 @@
 <?php 
 class Posts extends Controller{
-
+    public $postModel;
+    public $userModel;
     public function __construct()
     {
         if(!isLoggedIn()){

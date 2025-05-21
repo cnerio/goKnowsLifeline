@@ -27,3 +27,4 @@
   <script src="<?php echo URLROOT; ?>/js/jquery.steps.js"></script>
   <script src="<?php echo URLROOT; ?>/js/startup-modern.js"></script>
   <script src="<?php echo URLROOT; ?>/js/jquery.mask.js"></script>
+  <script src="<?php echo URLROOT; ?>/js/moment.min.js"></script>

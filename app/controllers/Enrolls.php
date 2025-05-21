@@ -1,7 +1,8 @@
 <?php
   class Enrolls extends Controller {
+    public $enrollModel;
     public function __construct(){
-     
+      $this->enrollModel = $this->model('Enroll');
     }
     
     public function index2(){
@@ -54,5 +55,17 @@
           ];
           echo json_encode($data);
         }
+    }
+
+    public function getprograms(){
+      $row = $this->enrollModel->getLifelinePrograms();
+      //print_r($row);
+      echo json_encode($row);
+    }
+
+    public function getagreementitems($states){
+      $row = $this->enrollModel->getAgreementsItems($states);
+      //print_r($row);
+      echo json_encode($row);
     }
   }

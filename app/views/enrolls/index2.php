@@ -6,19 +6,36 @@
         <div class="row">
             <div class="col mx-auto">
                 <form id="enrollForm" action="#">
+                    <div>
+                        <h3>Qualify</h3>
+
+                        <section>
+                            <div class="form-group">
+                                <label class="form-label">Email*</label>
+                                <input id="email" name="email" class="form-control" type="text" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Zip Code*</label>
+                                <input id="zipcode" name="zipcode" class="form-control zipcode" type="text" maxlength="5" pattern="^[0-9]{5}$" placeholder="00000" />
+                            </div>
+                            <div class="form-group" id="checkmessage">
+
+                            </div>
+                        </section>
+
                         <h3>Personal Info</h3>
 
                         <section>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="firstname">First Name <span class="requiredmark">*</span></label>
+                                        <label for="firstname">First Name</label>
                                         <input type="text" id="firstname" name="firstname" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="lastname">Last Name <span class="requiredmark">*</span></label>
+                                        <label for="lastname">Last Name</label>
                                         <input type="text" id="lastname" name="lastname" class="form-control">
                                     </div>
                                 </div>
@@ -26,22 +43,17 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="ssn">Last 4 digits of your Social Security Number <span class="requiredmark">*</span></label>
+                                        <label for="ssn">Last 4 digits of your Social Security Number</label>
                                         <input type="text" id="ssn" name="ssn" class="form-control" maxlength="4" pattern="[0-9]*" placeholder="0000">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="dob">Birth Date <span class="requiredmark">*</span></label>
+                                        <label for="dob">Birth Date</label>
                                         <div class="input-group">
-                                            <input type="text" id="dobM" name="dobM" class="form-control dob-group" maxlength="2" pattern="[0-9]*" placeholder="MM">
-                                            <input type="text" id="dobD" name="dobD" class="form-control dob-group" maxlength="2" pattern="[0-9]*" placeholder="DD">
-                                            <input type="text" id="dobY" name="dobY" class="form-control dob-group" maxlength="4" pattern="[0-9]*" placeholder="YYYY">
-                                        </div>
-                                        <div class="dob-errors">
-                                            <label id="dobM-error" class="error" for="dobM"></label>
-                                            <label id="dobD-error" class="error" for="dobD"></label>
-                                            <label id="dobY-error" class="error" for="dobY"></label>
+                                            <input type="text" id="dobM" name="dobM" class="form-control" maxlength="2" pattern="[0-9]*" placeholder="MM">
+                                            <input type="text" id="dobD" name="dobD" class="form-control" maxlength="2" pattern="[0-9]*" placeholder="DD">
+                                            <input type="text" id="dobY" name="dobY" class="form-control" maxlength="4" pattern="[0-9]*" placeholder="YYYY">
                                         </div>
                                     </div>
                                 </div>
@@ -49,13 +61,13 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="email">Email <span class="requiredmark">*</span></label>
-                                        <input type="text" id="email" name="email" class="form-control">
+                                        <label for="email2">Email</label>
+                                        <input type="text" id="email2" name="email2" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="phone">Phone <span class="requiredmark">*</span></label>
+                                        <label for="phone">Phone</label>
                                         <input type="text" id="phone" name="phone" class="form-control phoneUs">
                                     </div>
                                 </div>
@@ -64,7 +76,7 @@
                             <div class="row pt-2">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="address1">Street Address <span class="requiredmark">*</span></label>
+                                        <label for="address1">Street Address</label>
                                         <input type="text" id="address1" name="address1" class="form-control">
                                     </div>
                                 </div>
@@ -78,13 +90,13 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="city">City <span class="requiredmark">*</span></label>
+                                        <label for="city">City</label>
                                         <input type="text" id="city" name="city" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="state">State <span class="requiredmark">*</span></label>
+                                        <label for="state">State</label>
                                         <select name="state" id="state" class="form-select">
                                             <option value="">Select a state</option>
                                             <option value="AL">Alabama</option>
@@ -145,8 +157,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label for="zipcode">Zipcode <span class="requiredmark">*</span></label>
-                                        <input type="text" id="zipcode" name="zipcode" class="form-control zipcode" maxlength="5" pattern="^[0-9]{5}$" placeholder="00000">
+                                        <label for="zipcode2">Zipcode</label>
+                                        <input type="text" id="zipcode2" name="zipcode2" class="form-control zipcode" maxlength="5" pattern="^[0-9]{5}$" placeholder="00000">
                                     </div>
                                 </div>
                                 <div class="col-md-12 pt-2">
@@ -283,7 +295,7 @@
 
                                             <option value="100000">Federal Public Housing Assistance (Section 8)</option>
 
-                                            <option value="100014">Veteran&#39;s Pension or Survivors Benefit Programs</option>
+                                            <option value="100014">Veteran’s Pension or Survivors Benefit Programs</option>
 
                                             <option value="100011">Bureau of Indian Affairs General Assistance</option>
 
@@ -341,13 +353,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID</span>
-                                    <input type="file" id="fileInput" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
-                                    <div id="preview"></div>
-                                </div>
-                            </div>
                         </section>
 
                         <h3>Agreement</h3>
@@ -358,40 +363,208 @@
                                     <div class="form-group">
                                         <p style="margin-bottom: 0;">I agree, under penalty of perjury,to the following statements:</p>
                                         <p><small>(You must initial next to each statement.)</small></p>
-                                        <div id="agreeItems">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <input class="form-control" name="initial_1" onclick="updateInitials('initial_1')" type="text" maxlength="2" id="initial_1" data-gtm-form-interact-field-id="1">
+                                                <small>Initial</small>
+                                            </div>
+                                            <div class="col-10">
+                                                <p> I (or my dependent or other person in my household) currently get benefits from the government
+
+                                                    program(s) listed on this form or my annual household income is 135% or less than the Federal
+
+                                                    Poverty Guidelines (the amount listed in the Federal Poverty Guidelines table on this form).</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <input class="form-control" name="initial_2" onclick="updateInitials('initial_2')" type="text" maxlength="2" id="initial_2" style="display: block !important" data-gtm-form-interact-field-id="2">
+                                                <small>Initial</small>
+                                            </div>
+                                            <div class="col-10">
+                                                <p>I agree that if I move I will give my service provider my new address within 30&nbsp;days.</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-2">
+
+                                                <input class="form-control" name="initial_3" onclick="updateInitials('initial_3')" type="text" maxlength="2" id="initial_3" data-gtm-form-interact-field-id="3" aria-invalid="false">
+
+                                                <small>Initial</small>
+
+                                            </div>
+
+                                            <div class="col-10">
+                                                I understand that I have to tell my service provider within 30 days if I do not qualify for Lifeline
+
+                                                anymore,&nbsp;including:<br>
+
+                                                1.) I, or the person in my household that qualifies, do not qualify through a government
+
+                                                program or income&nbsp;anymore.<br>
+
+                                                2.) Either I or someone in my household gets more than one Lifeline benefit (including more
+
+                                                than one Lifeline broadband internet service, more than one Lifeline telephone service, or
+
+                                                both Lifeline telephone and Lifeline broadband internet&nbsp;services).
+                                            </div>
 
                                         </div>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
-                            <div class="row mb-3">
-                                <div class="col-md-12">
-                                    <p><b>Typing your name in the box below will be considered your signature</b></p>
-                                    <label for="signaturename">TYPE NAME</label>
-                                    <input type="text" class="form-control mb-2" id="signaturename" name="signaturename">
-                                    <span id="datetimespan" style="font-family: sans-serif;"></span>
-                                    <input type="hidden" id="datetimeconsent" name="datetimeconsent">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-check">
-                                        <input type="checkbox" name="terms" id="terms" class="form-check-input" value="YES" checked>
-                                        <label class="form-chack-label" for="terms">I agree to the <a href="#">terms of service</a> and <a href="#">privacy policy.</a></label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" name="sms" id="sms" class="form-check-input" value="YES" checked>
-                                        <label class="form-chack-label" for="sms">Verify benefits and delivery through SMS</label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input type="checkbox" name="know" id="know" class="form-check-input" value="YES" checked>
-                                        <label class="form-chack-label" for="know">I acknowledge that my PII will be transferred to NLAD to complete my Lifeline enrollment.</label>
+                                        <div class="row">
+
+                                            <div class="col-2">
+
+                                                <input class="form-control" name="initial_4" onclick="updateInitials('initial_4')" type="text" maxlength="2" id="initial_4">
+
+                                                <small>Initial</small>
+
+                                            </div>
+
+                                            <div class="col-10">
+                                                <p>I know that my household can only get one Lifeline benefit and, to the best of my knowledge,
+
+                                                    my household is not getting more than one Lifeline&nbsp;benefit.</p>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-2">
+
+                                                <input class="form-control" name="initial_5" onclick="updateInitials('initial_5')" type="text" maxlength="2" id="initial_5" aria-invalid="false">
+
+                                                <small>Initial</small>
+
+                                            </div>
+
+                                            <div class="col-10">
+
+                                                <p>I agree that all of the information I provide on this form may be collected, used, shared, and retained
+
+                                                    for the purposes of applying for and/or receiving the Lifeline Program benefit. I understand that
+
+                                                    if this information is not provided to the Lifeline Program Administrator, I will not be able to get
+
+                                                    Lifeline benefits. If the laws of my state or Tribal government require it, I agree that the state or
+
+                                                    Tribal government may share information about my benefits for a qualifying program with the
+
+                                                    Lifeline Program Administrator. The information shared by the state or Tribal government will be
+
+                                                    used only to help find out if I can get a Lifeline Program&nbsp;benefit.</p>
+                                            </div>
+
+                                        </div>
+
+                                        <!-- <li class="list-group-item pb-0 pt-3">
+
+                                            <div class="grid-row form-text pb-0">
+
+                                                <div class="grid-item">
+
+                                                    <input class="form-initial_input mr-2 valid" name="initial_6" onclick="updateInitials('initial_6')" type="text" maxlength="2" id="initial_6" style="display: block !important">
+
+                                                    <small>Initial</small>
+
+                                                </div>
+
+                                                <label class="form-check-label" for="initial_6">
+
+                                                    All the answers and agreements that I provided on this form are true and correct to the best
+
+                                                    of my&nbsp;knowledge.</label>
+
+                                            </div>
+
+                                            <div><label id="initial_6-error" class="error" for="initial_6" style="display: none;"></label></div>
+
+                                        </li>
+
+                                        <li class="list-group-item pb-0 pt-3">
+
+                                            <div class="grid-row form-text pb-0">
+
+                                                <div class="grid-item">
+
+                                                    <input class="form-initial_input mr-2 valid" name="initial_7" onclick="updateInitials('initial_7')" type="text" maxlength="2" id="initial_7">
+
+                                                    <small>Initial</small>
+
+                                                </div>
+
+                                                <label class="form-check-label" for="initial_7">
+
+                                                    I know that willingly giving false or fraudulent information to get Lifeline Program benefits is
+
+                                                    punishable by law and can result in fines, jail time, de-enrollment, or being barred from the&nbsp;program.</label>
+
+                                            </div>
+
+                                            <div><label id="initial_7-error" class="error" for="initial_7" style="display: none;"></label></div>
+
+                                        </li>
+
+                                        <li class="list-group-item pb-0 pt-3">
+
+                                            <div class="grid-row form-text pb-0">
+
+                                                <div class="grid-item">
+
+                                                    <input class="form-initial_input mr-2 valid" name="initial_8" onclick="updateInitials('initial_8')" type="text" maxlength="2" id="initial_8">
+
+                                                    <small>Initial</small>
+
+                                                </div>
+
+                                                <label class="form-check-label" for="initial_8">
+
+                                                    My service provider may have to check whether I still qualify at any time. If I need to recertify
+
+                                                    (renew) my Lifeline benefit, I understand that I have to respond by the deadline or I will be
+
+                                                    removed from the Lifeline Program and my Lifeline benefit will&nbsp;stop.</label>
+
+                                            </div>
+
+                                            <div><label id="initial_8-error" class="error" for="initial_8" style="display: none;"></label></div>
+
+                                        </li>
+
+                                        <li class="list-group-item pb-0 pt-3 ">
+
+                                            <div class="grid-row form-text pb-0">
+
+                                                <div class="grid-item">
+
+                                                    <input class="form-initial_input mr-2 valid" name="initial_9" onclick="updateInitials('initial_9')" type="text" maxlength="2" id="initial_9" aria-invalid="false">
+
+                                                    <small>Initial</small>
+
+                                                </div>
+
+                                                <label class="form-check-label" for="initial_9">
+
+                                                    The certification below applies to all consumers and is required to process your application.
+
+                                                    I was truthful about whether or not I am a resident of Tribal lands, as defined in section 2 of
+
+                                                    this&nbsp;form</label>
+
+                                            </div>
+
+                                            <div><label id="initial_9-error" class="error" for="initial_9" style="display: none;"></label></div>
+
+                                        </li>
+
+                                    </ul> -->
                                     </div>
                                 </div>
                             </div>
                         </section>
+                    </div>
                 </form>
             </div>
         </div>
@@ -403,54 +576,14 @@
 <script>
     $(document).ready(function() {
         $(".phoneUs").mask('(000) 000-0000');
-        $(".zipcode").mask('00000');
-        //setInterval(getDatetime, 1000);
-        // $.validator.addMethod("validDate", function(value, element, params) {
-        //     var day = $('#dobD').val();
-        //     var month = $('#dobM').val();
-        //     var year = $('#dobY').val();
-            
-        //     // Concatenate day, month, and year into a date string
-        //     var date = new Date(year + '-' + month + '-' + day);
-            
-        //     // Check if the date is valid
-        //     if (date.getFullYear() == year && (date.getMonth() + 1) == month && date.getDate() == day) {
-        //     return true;
-        //     } else {
-        //     return false;
-        //     }
-        // }, "Invalid date");
+        $(".zipcode").mask('00000')
     });
     var form = $("#enrollForm");
     form.validate({
         errorPlacement: function errorPlacement(error, element) {
-            element.after(error);
+            element.before(error);
         },
         rules: {
-            firstname:{
-                required:true
-            },
-            lastname:{
-                required:true
-            },
-            ssn:{
-                required:true
-            },
-            dobD: {
-                required: true,
-                digits: true,
-                range: [1, 31]
-            },
-            dobM: {
-                required: true,
-                digits: true,
-                range: [1, 12]
-            },
-            dobY: {
-                required: true,
-                digits: true,
-                range: [1900, 2099]
-            },
             zipcode: {
                 required: true,
                 zipcodeUS: true
@@ -458,72 +591,60 @@
             email: {
                 required: true,
                 email: true
-            },
-            phone:{
-                required:true
-            },
-            address1:{
-                required:true
-            },
-            city:{
-                required:true
-            },
-            state:{
-                required:true
-            },
-            zipcode:{
-                required:true
-            },
-            eligibility_program:{
-                required:true
-            },
-            signaturename:{
-                required:true
-            }
-        },
-        messages:{
-            dobD: {
-                required: "Please enter a day",
-                digits: "Please enter a valid day",
-                range: "Please enter a valid day"
-            },
-            dobM: {
-                required: "Please enter a month",
-                digits: "Please enter a valid month",
-                range: "Please enter a valid month"
-            },
-            dobY: {
-                required: "Please enter a year",
-                digits: "Please enter a valid year",
-                range: "Please enter a valid year"
             }
         }
     });
-    form.steps({
+    form.children("div").steps({
         headerTag: "h3",
         bodyTag: "section",
         transitionEffect: "slideLeft",
         onStepChanging: function(event, currentIndex, newIndex) {
             form.validate().settings.ignore = ":disabled,:hidden";
-            console.log(currentIndex)
-            let canProceed = false;
+            //console.log(currentIndex)
+
             if (form.valid() === true) {
-                
+                var canProceed = false;
+                // Optional: You can use `async: false` to force blocking until AJAX completes
                 if (currentIndex === 0) {
+                    var customerEmail = $("#email").val();
+                    var zipcode = $("#zipcode").val()
+
+
+                    $.ajax({
+                        url: "<?php echo URLROOT; ?>/enrolls/check",
+                        method: "POST",
+                        data: {
+                            "email": customerEmail,
+                            "zipcode": zipcode
+                        },
+                        async: false, // block navigation until response
+                        success: function(response) {
+                            console.log("Step " + currentIndex + " saved.");
+                            console.log(response);
+                            var myObj = JSON.parse(response)
+                            if (myObj.status == "fail") {
+                                canProceed = false;
+                                $("#checkmessage").html("<p style='color:red'>Sorry!, Unfortunatelly we can't provide services for this zipcode area, but we will email you when our service it's available on you area</p>")
+                            } else {
+                                canProceed = true;
+                                $("#email2").val(customerEmail).attr('disabled', 'disabled')
+                                $("#zipcode2").val(zipcode).attr('disabled', 'disabled')
+                            }
+
+
+                        },
+                        error: function() {
+                            alert("Error saving step " + currentIndex);
+                        }
+                    });
+                } else if (currentIndex === 1) {
                     canProceed = true;
-                    getlifelineprograms();
-                } else if (currentIndex === 1) {                    
-                    canProceed = true;
-                    let firstname = $("#firstname").val();
-                    let lastname = $("#lastname").val();
-                    let initials = firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
-                    getAgreementsItems('all',initials);
-                    getDatetime();
                 } else if (currentIndex === 2) {
                     canProceed = true;
                 }
+            }else{
+                canProceed=false;
             }
-            
             return canProceed;
             //return form.valid();
         },
@@ -551,170 +672,4 @@
             '<h6>Ship to a different address? <i class="fa fa-chevron-up"></i></h6>' :
             '<h6>Ship to a different address? <i class="fa fa-chevron-down"></i></h6>');
     });
-
-    function getlifelineprograms(){
-        $.ajax({
-            url: "<?php echo URLROOT; ?>/enrolls/getprograms",
-            method: "GET",
-            async: false, // block navigation until response
-            success: function(response) {
-                
-                let options = JSON.parse(response)
-                console.log(options)
-                var sel = $('#eligibility_program'); // Reference to the select element
-                sel.empty();
-                $('<option>').val('').text('Select..').appendTo(sel);
-                $.each(options, function(key, val) {
-                    $('<option>').val(val.id_program).text(val.name).appendTo(sel);
-                });
-                },
-                error: function() {
-                    alert("Error saving step " + currentIndex);
-                }
-                    });
-    }
-
-    function getAgreementsItems(states,initials){
-
-        const template = params => `<div class="row mb-2">
-                                            <div class="col-3 col-md-2">
-                                                <input class="form-control" name="${params.inputname}" type="text" maxlength="2" id="${params.inputname}">
-                                                <small>Initial</small>
-                                            </div>
-                                            <div class="col-9 col-md-10">
-                                                <p style="font-size:.875em;">${params.description}</p>
-                                            </div>
-                                        </div>`
-        $.ajax({
-            url: "<?php echo URLROOT; ?>/enrolls/getagreementitems/"+states,
-            method: "GET",
-            async: false, // block navigation until response
-            success: function(response) {
-                    
-                    let items = JSON.parse(response);
-                    console.log(items)
-                    var agree = $('#agreeItems');
-                    agree.empty();
-                    $.each(items,function(key,val){
-                        console.log(val)
-                        agree.append(template({inputname:val.inputname,description:val.description}));
-                        $("#"+val.inputname).val(initials)
-                        let newInput = $("#"+val.inputname)
-                        newInput.rules('add', {
-                            required: true,
-                            messages: {
-                                required: "This field is required"
-                            }
-                            });
-                    });
-
-                },
-                error: function() {
-                    alert("Error saving step " + currentIndex);
-                }
-                    });
-    }
-
-    function getDatetime(){
-        var date = moment();
-        let now = date.format("MMMM D, yyyy, h:mm:ss A");
-        let currentdatetime = date.format("YYYY-MM-DD HH:mm:ss");
-        //var formattedDateTime = date.format("YYYY-MM-DD HH:mm:ss");
-        $("#datetimeconsent").val(currentdatetime);
-        // Saturday, June 9th, 2007, 5:46:21 PM
-        $('#datetimespan').append(now);
-    }
-
-  let base64String = "";
-  let uploadedFileName = "";
-
-  $('#uploadBtn').on('click', function () {
-    $('#fileInput').click();
-  });
-
-  $('#fileInput').on('change', function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-
-    reader.onload = function () {
-      base64String = reader.result;
-      uploadedFileName = file.name;
-
-      // Hide upload button
-      $('#uploadBtn').hide();
-
-      // Show preview
-      let previewHtml = '';
-
-      if (file.type.startsWith('image/')) {
-        previewHtml = `<img src="${base64String}" style="max-width:200px; display:block; margin-bottom:10px;">`;
-      } else {
-        previewHtml = `<p>📄 ${file.name}</p>`;
-      }
-
-      // Add remove button
-      previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn">Remove</button>`;
-
-      $('#preview').html(previewHtml);
-
-      // OPTIONAL: Send via AJAX
-    //   $.ajax({
-    //     url: 'your_upload_endpoint.php',
-    //     method: 'POST',
-    //     data: {
-    //       filename: uploadedFileName,
-    //       filedata: base64String
-    //     },
-    //     success: function (response) {
-    //       console.log('Upload success:', response);
-    //     },
-    //     error: function (xhr, status, error) {
-    //       console.error('Upload error:', error);
-    //     }
-    //   });
-    };
-
-    reader.readAsDataURL(file);
-  });
-
-  // Remove handler
-  $(document).on('click', '#removeBtn', function () {
-    base64String = "";
-    uploadedFileName = "";
-    $('#preview').empty();
-    $('#uploadBtn').show();
-    $('#fileInput').val(""); // Clear file input
-  });
-
-// document.getElementById('uploadBtn').addEventListener('click', function () {
-//   document.getElementById('fileInput').click();
-// });
-
-// document.getElementById('fileInput').addEventListener('change', function () {
-//   const file = this.files[0];
-//   if (!file) return;
-
-//   const reader = new FileReader();
-
-//   reader.onload = function () {
-//     const base64String = reader.result;
-//     console.log("Base64:", base64String);
-
-//     // OPTIONAL: preview image if it's an image
-//     if (file.type.startsWith('image/')) {
-//       const img = document.createElement('img');
-//       img.src = base64String;
-//       img.style.maxWidth = '200px';
-//       document.getElementById('preview').innerHTML = '';
-//       document.getElementById('preview').appendChild(img);
-//     } else {
-//       document.getElementById('preview').innerHTML = `<p>File loaded: ${file.name}</p>`;
-//     }
-//   };
-
-//   reader.readAsDataURL(file); // Convert to Base64
-// });
-
 </script>
