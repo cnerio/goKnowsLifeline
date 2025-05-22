@@ -28,4 +28,17 @@ class Enroll {
         return $id;
     }
 
+    public function updateData($data,$table){
+        $this->db->updateQuery($table,$data,"customer_id=:customer_id");
+    }
+
+    public function updateCusId($lastId,$customerId,$table){
+        $data=[
+            "id"=>$lastId,
+            "customer_id"=>$customerId
+        ];
+        $this->db->updateQuery($table,$data,"id=:id");
+
+    }
+
 }

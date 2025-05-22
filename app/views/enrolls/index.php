@@ -1,6 +1,9 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
 <?php require APPROOT . '/views/inc/navbar.php'; ?>
-
+<?php 
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+$full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+?>
 <section class="py-5 mt-5">
     <div class="container py-5">
         <div class="row">
@@ -259,7 +262,8 @@
                                     </div>
                                 </div>
                             </div>
-
+                            <input type="hidden" id="url" name="url" value="<?php echo $full_url; ?>">
+                            <input type="hidden" id="company" name="company" value="GOKNOWS">
                         </section>
 
                         <h3>Elegibility</h3>
@@ -328,13 +332,13 @@
                                     <div class="form-group">
                                         <h6>What type of phone do you currently use?</h6>
                                         <div class="form-check form-check-inline">
-                                            <input class=" form-check-input" value="Yes" type="radio" name="type_phone" id="apple_phone">
+                                            <input class=" form-check-input" value="iOS" type="radio" name="type_phone" id="apple_phone">
 
                                             <label class="form-check-label" for="apple_phone"> <i class="fa fa-apple" style="color:darkgrey"></i> iOS</label>
                                         </div>
                                         <div class="form-check form-check-inline">
 
-                                            <input class=" form-check-input" value="No" type="radio" name="type_phone" id="android_phone">
+                                            <input class=" form-check-input" value="Android" type="radio" name="type_phone" id="android_phone">
 
                                             <label class="form-check-label" for="android_phone"> <i class="fa fa-android" style="color:green"></i> Android</label>
                                         </div>
@@ -348,6 +352,7 @@
                                     <div id="preview"></div>
                                 </div>
                             </div>
+                            
                         </section>
 
                         <h3>Agreement</h3>
@@ -378,26 +383,57 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-check">
-                                        <input type="checkbox" name="terms" id="terms" class="form-check-input" value="YES" checked>
+                                        <input type="checkbox" name="terms" id="terms" class="form-check-input" value="Yes" onchange='radioValueCheck("terms")' checked>
                                         <label class="form-chack-label" for="terms">I agree to the <a href="#">terms of service</a> and <a href="#">privacy policy.</a></label>
                                     </div>
                                     <div class="form-check">
-                                        <input type="checkbox" name="sms" id="sms" class="form-check-input" value="YES" checked>
+                                        <input type="checkbox" name="sms" id="sms" class="form-check-input" value="Yes" onchange='radioValueCheck("sms")' checked>
                                         <label class="form-chack-label" for="sms">Verify benefits and delivery through SMS</label>
                                     </div>
                                     <div class="form-check">
-                                        <input type="checkbox" name="know" id="know" class="form-check-input" value="YES" checked>
+                                        <input type="checkbox" name="know" id="know" class="form-check-input" value="Yes" onchange='radioValueCheck("know")' checked>
                                         <label class="form-chack-label" for="know">I acknowledge that my PII will be transferred to NLAD to complete my Lifeline enrollment.</label>
                                     </div>
                                 </div>
                             </div>
+                            <input type="hidden" id="customer_id" name="customer_id" value="">
                         </section>
                 </form>
             </div>
         </div>
     </div>
 </section>
-
+<div class="loader" style="display: none;">
+    <div class="spinner"></div>
+</div>
+<style>
+    .loader{
+        position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+    }
+    .spinner {
+  width: 50px;
+  --b: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #514b82;
+  -webkit-mask:
+    repeating-conic-gradient(#0000 0deg,#000 1deg 70deg,#0000 71deg 90deg),
+    radial-gradient(farthest-side,#0000 calc(100% - var(--b) - 1px),#000 calc(100% - var(--b)));
+  -webkit-mask-composite: destination-in;
+          mask-composite: intersect;
+  animation: l5 1s infinite;
+}
+@keyframes l5 {to{transform: rotate(.5turn)}}
+</style>
 <?php require APPROOT . '/views/inc/footer.php'; ?>
 
 <script>
@@ -511,7 +547,7 @@
                                 canProceed = false;
                                 $("#checkmessage").html("<p style='color:red'>Sorry!, Unfortunatelly we can't provide services for this zipcode area, but we will email you when our service it's available on you area</p>")
                             } else {
-                                columnId=myObj.lastId;
+                                $("#customer_id").val(myObj.customer_id);
                                 canProceed = true;
                                 getlifelineprograms();
                             }
@@ -523,15 +559,43 @@
                         }
                     });
 
-                } else if (currentIndex === 1) {                    
-                    canProceed = true;
-                    let firstname = $("#firstname").val();
-                    let lastname = $("#lastname").val();
-                    let initials = firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
-                    getAgreementsItems('all',initials);
-                    getDatetime();
-                } else if (currentIndex === 2) {
-                    canProceed = true;
+                } else if (currentIndex === 1) {
+                    //let step2Data = $("#enrollForm-p-1 :input").serialize();  
+                    
+                    $.ajax({
+                        url: "<?php echo URLROOT; ?>/enrolls/savestep2",
+                        method: "POST",
+                        data: {
+                            eligibility_program:$("#eligibility_program").val(),
+                            nv_application_id:$("#nv_application_id").val(),
+                            customer_id:$("#customer_id").val(),
+                            current_benefits:radioCheck('current_benefits'),
+                            type_phone:($('input[name="type_phone"]').is(':checked'))?$('input[name="type_phone"]:checked').val():'',
+                            govId:(base64String)?base64String:null
+                        },
+                        async: false, // block navigation until response
+                        success: function(response) {
+                            console.log("Step " + currentIndex + " saved.");
+                            console.log(response);
+                            var myOBj = JSON.parse(response);
+                            if(myOBj.statusFile){
+                                canProceed = true;
+                                let firstname = $("#firstname").val();
+                                let lastname = $("#lastname").val();
+                                let initials = firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
+                                getAgreementsItems('all',initials);
+                                getDatetime();
+                            }else{
+                                canProceed = false;
+                            }
+
+                        },
+                        error: function() {
+                            alert("Error saving step " + currentIndex);
+                        }
+                    });
+
+                    
                 }
             }
             
@@ -539,12 +603,49 @@
             //return form.valid();
         },
         onFinishing: function(event, currentIndex) {
-            form.validate().settings.ignore = ":disabled";
-            return form.valid();
+            form.validate().settings.ignore = ":disabled,:hidden";
+            console.log(currentIndex)
+            let canProceed = false;
+            if (form.valid() === true) {
+                let step3Data = $("#enrollForm-p-2 :input").serialize();
+                $.ajax({
+                        url: "<?php echo URLROOT; ?>/enrolls/savestep3",
+                        method: "POST",
+                        data: step3Data,
+                        async: false, // block navigation until response
+                        success: function(response) {
+                            console.log("Step " + currentIndex + " saved.");
+                            console.log(response);
+                            var myObject = JSON.parse(response)
+                            if(myObject.statusfinale){
+                                canProceed=true;
+                            }else{
+                                canProceed=false;
+                            }
+
+                        },
+                        error: function() {
+                            alert("Error saving step " + currentIndex);
+                        }
+                    });
+            }
+            return canProceed;
         },
         onFinished: function(event, currentIndex) {
-            alert("Submitted!");
-        }
+            //alert("Submitted!");
+              // Show the loader
+                $('.loader').show();
+
+                // Redirect after 2 seconds
+                setTimeout(function() {
+                    window.location.href = "<?php echo URLROOT;?>/enrolls/thankyou";
+                }, 2000);
+
+                // Optionally, hide the loader after the redirect
+                setTimeout(function() {
+                    $('.loader').hide();
+                }, 2000);
+                }
     });
 
     $('#showShip').on('click', function() {
@@ -676,5 +777,26 @@
     $('#fileInput').val(""); // Clear file input
   });
 
+  function radioCheck(name) {
+		var check;
+		//$('input[name=option]').on('change', function() {
+		if ($('input[name='+name+']').is(':checked')) {
+			check = 'Yes';
+		} else {
+			check = 'No';
+		}
+		//});
+		return check;
+	}
 
+    function radioValueCheck(id) {
+		//$('input[name=option]').on('change', function() {
+		if ($('#'.id).is(':checked')) {
+			$('#'.id).val('Yes');
+		} else {
+			$('#'.id).val('No');
+		}
+		//});
+		return check;
+	}
 </script>
