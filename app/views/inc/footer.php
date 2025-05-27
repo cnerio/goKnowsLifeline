@@ -20,11 +20,11 @@
 
   <script src="<?php echo URLROOT; ?>/js/jquery.min.js"></script>
   <script src="<?php echo URLROOT; ?>/bootstrap/js/bootstrap.min.js"></script>
-  
-  
   <script src="<?php echo URLROOT; ?>/js/jquery.validate.js"></script>
   <script src="<?php echo URLROOT; ?>/js/additional-methods.js"></script>
   <script src="<?php echo URLROOT; ?>/js/jquery.steps.js"></script>
   <script src="<?php echo URLROOT; ?>/js/startup-modern.js"></script>
   <script src="<?php echo URLROOT; ?>/js/jquery.mask.js"></script>
   <script src="<?php echo URLROOT; ?>/js/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+

@@ -1,14 +1,19 @@
 <?php
 class Users extends Controller{
+    public $userModel;
     public function __construct()
     {
         $this->userModel = $this->model('User');
     }
 
+    public function hashed($string){
+        echo password_hash($string, PASSWORD_DEFAULT);
+    }
+
     public function register(){
         if ($_SERVER['REQUEST_METHOD'] == 'POST'){
            // process form
-           $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING); 
+           //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING); 
             $data = [
                 'name' => trim($_POST['name']),
                 'email' => trim($_POST['email']),
@@ -82,7 +87,7 @@ class Users extends Controller{
     public function login(){
         if ($_SERVER['REQUEST_METHOD'] == 'POST'){
            // process form
-           $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING); 
+           //$_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING); 
            $data = [
                'email' => trim($_POST['email']),
                'password' => trim($_POST['password']),
@@ -140,7 +145,7 @@ class Users extends Controller{
         $_SESSION['user_id'] = $user->id;
         $_SESSION['name'] = $user->name;
         $_SESSION['email'] = $user->email;
-        redirect('posts/index');
+        redirect('records/index');
     }
 
     //logout and destroy user session

@@ -28,6 +28,13 @@ class Enroll {
         return $id;
     }
 
+    public function getCustomerData($customerId){
+        $this->db->query('SELECT * FROM lifeline_records WHERE customer_id=:customer_id');
+        $this->db->bind(":customer_id",$customerId);
+        $result = $this->db->resultSet();
+        return $result;
+    }
+
     public function updateData($data,$table){
         $this->db->updateQuery($table,$data,"customer_id=:customer_id");
     }
@@ -39,6 +46,13 @@ class Enroll {
         ];
         $this->db->updateQuery($table,$data,"id=:id");
 
+    }
+
+    public function getCredentials(){
+         $this->db->query('SELECT * FROM clec_credentials where active = 1;');
+            $result = $this->db->resultSet();
+
+            return $result;
     }
 
 }

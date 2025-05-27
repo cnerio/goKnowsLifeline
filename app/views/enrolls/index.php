@@ -397,6 +397,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                 </div>
                             </div>
                             <input type="hidden" id="customer_id" name="customer_id" value="">
+                            
                         </section>
                 </form>
             </div>
@@ -606,8 +607,14 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             form.validate().settings.ignore = ":disabled,:hidden";
             console.log(currentIndex)
             let canProceed = false;
+            //let screenshot = takescreenshot();
+            
             if (form.valid() === true) {
                 let step3Data = $("#enrollForm-p-2 :input").serialize();
+                // Append your custom data
+                //step3Data.push({ name: 'base64screen', value: screenshot  });
+                //step3Data += '&base64screen='+screenshot;
+
                 $.ajax({
                         url: "<?php echo URLROOT; ?>/enrolls/savestep3",
                         method: "POST",
@@ -617,8 +624,9 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             console.log("Step " + currentIndex + " saved.");
                             console.log(response);
                             var myObject = JSON.parse(response)
-                            if(myObject.statusfinale){
+                            if(myObject.status){
                                 canProceed=true;
+                                
                             }else{
                                 canProceed=false;
                             }
@@ -632,19 +640,44 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             return canProceed;
         },
         onFinished: function(event, currentIndex) {
-            //alert("Submitted!");
-              // Show the loader
-                $('.loader').show();
 
-                // Redirect after 2 seconds
-                setTimeout(function() {
-                    window.location.href = "<?php echo URLROOT;?>/enrolls/thankyou";
-                }, 2000);
+            takeScreenshot().then(function(base64image) {
+                                    console.log("Base64 Screenshot:", base64image);
+                                    $.ajax({
+                        url: "<?php echo URLROOT; ?>/enrolls/savescreen",
+                        method: "POST",
+                        data: {base64screen:base64image,customer_id:$("#customer_id").val()},
+                        async: false, // block navigation until response
+                        success: function(response) {
+                            console.log("Step " + currentIndex + " saved.");
+                            console.log(response);
+                            var myObject = JSON.parse(response)
+                            if(myObject.statusScreen){
+                                //canProceed=true;
+                                // Show the loader
+                                $('.loader').show();
 
-                // Optionally, hide the loader after the redirect
-                setTimeout(function() {
-                    $('.loader').hide();
-                }, 2000);
+                                // Redirect after 2 seconds
+                                setTimeout(function() {
+                                    window.location.href = "<?php echo URLROOT;?>/enrolls/thankyou";
+                                }, 2000);
+
+                                // Optionally, hide the loader after the redirect
+                                setTimeout(function() {
+                                    $('.loader').hide();
+                                }, 2000);
+                            }else{
+                               // canProceed=false;
+                            }
+
+                        },
+                        error: function() {
+                            alert("Error saving step " + currentIndex);
+                        }
+                    });
+                                });
+
+              
                 }
     });
 
@@ -799,4 +832,28 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 		//});
 		return check;
 	}
+
+    // Async screenshot function
+function takeScreenshot() {
+  return html2canvas(document.querySelector("#enrollForm")).then(function(canvas) {
+    return canvas.toDataURL("image/png");
+  });
+}
+
+    // function takescreenshot(){
+    //     html2canvas(document.body).then(function(canvas) {
+    //     // Get base64 string
+    //     const base64image = canvas.toDataURL("image/png");
+
+    //     // Show in console
+    //     //console.log(base64image);
+
+    //     // (Optional) You could send it to a server using fetch/ajax or display it
+    //     // Example: show the image on screen
+    //     // const img = document.createElement("img");
+    //     // img.src = base64image;
+    //     // document.body.appendChild(img);
+    //     return base64image;
+    // });
+    // }
 </script>

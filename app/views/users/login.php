@@ -1,11 +1,13 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
-<div class="row">
-    <div class="col-md-6 mx-auto">
+<section class="py-5 mt-5">
+    <div class="container py-5">
+        <div class="row">
+    <div class="col-md-4 mx-auto">
         <div class="card bg-light mt-5">
             <div class="card-header card-text">
                 <?php flash('register_success'); ?>
                 <h2 class="card-text">User login</h2>
-            <p class="card-text">Please enter your username and password</p>
+            <p class="card-text"><small>Please enter your username and password</small></p>
             </div>
         
             <div class="card-body">
@@ -25,10 +27,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
-                                <input type="submit" class="btn btn-success btn-block pull-left" value="Login">
-                            </div>
-                            <div class="col">
-                                <a href="<?php echo URLROOT ;?>/users/register" class="btn btn-light btn-block pull-right">No account? Register </a>
+                                <input type="submit" class="btn btn-primary shadow pull-right" value="Login">
                             </div>
                         </div>
                     </div>
@@ -37,4 +36,6 @@
         </div>
     </div>
 </div>
-<?php require APPROOT . '/views/inc/footer.php'; ?>
+    </div>
+</section>
+<?php //require APPROOT . '/views/inc/footer.php'; ?>
