@@ -924,6 +924,10 @@
 						} else {
 							$("#status-result").html(fail_response)
 						}
+
+						setTimeout(() => {
+							$("#status-result").html("");
+						}, 5000);
 					}
 				});
 			})
@@ -974,6 +978,10 @@
 						} else {
 							$("#update-record-result").html(fail_response)
 						}
+
+						setTimeout(() => {
+							$("#update-record-result").html("");
+						}, 5000);
 					})
 
 			});

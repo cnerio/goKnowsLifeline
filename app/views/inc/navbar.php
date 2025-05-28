@@ -8,7 +8,7 @@
                 <li class="nav-item"><a class="nav-link" href="integrations.html">Integrations</a></li>
                 <li class="nav-item"><a class="nav-link" href="pricing.html">Pricing</a></li>
                 <li class="nav-item"><a class="nav-link active" href="contacts.html">Contacts</a></li> -->
-            </ul><a class="btn btn-primary shadow" role="button" href="apply.html">apply</a>
+            </ul><?php if($apply){ ?><a class="btn btn-primary shadow" role="button" href="<?php echo URLROOT; ?>/enrolls">Apply Now!</a> <?php } ?>
         </div>
     </div>
 </nav>

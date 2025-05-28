@@ -91,7 +91,7 @@ class Record {
 	
 	
 	public function getOrder($orderid){
-		$this->db->query('SELECT * FROM go_knows.lifeline_records WHERE id=:id');
+		$this->db->query('SELECT * FROM lifeline_records WHERE id=:id');
 		$this->db->bind("id",$orderid);
 		$getOrder = $this->db->single();
 		return $getOrder;
