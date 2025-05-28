@@ -28,6 +28,34 @@
         $this->view("records/index");
     }
 
+	public function updateRecordInput(){
+		if($_SERVER['REQUEST_METHOD']=='POST'){
+			$field = $_POST['field'];
+			$data=[
+				$field=>$_POST[$field],
+				"id"=>$_POST['id']
+			];
+			//print_r($data);
+			$result = $this->enrollsModel->updateDataById($data,"lifeline_records");
+			$response = ["status"=>$result];
+			echo json_encode($response);
+		}
+	}
+
+	public function updateUnableToProcess(){
+		if($_SERVER['REQUEST_METHOD']=='POST'){
+			$data=[
+				"acp_status"=>$_POST['acp_status'],
+				"order_id"=>$_POST['order_id'],
+				"id"=>$_POST['id']
+			];
+			//print_r($data);
+			$result = $this->enrollsModel->updateDataById($data,"lifeline_records");
+			$response = ["status"=>$result];
+			echo json_encode($response);
+		}
+	}
+
     public function read(){
 			if($_SERVER['REQUEST_METHOD']=='POST'){
 		//if($_POST){
@@ -77,8 +105,9 @@
 			//print_r($data);
 			$camposBase=array("customer_id","first_name","second_name","phone_number","email","dob","city","state","zipcode","order_id","program_benefit","created_at","source");
 			$addWhere="";
+			$count=0;
 			for($index=0;$index<count($data['arrayCampos']);$index++){
-				$count += ($ArrayCampos[$index]!='')?1:0;
+				$count += ($data['arrayCampos'][$index]!='')?1:0;
 				
 					if(!empty($data['arrayCampos'][$index])){
 
@@ -221,13 +250,316 @@
 		}
 	}
 
-    	public function getResponses(){
+    public function getResponses(){
 		if($_SERVER['REQUEST_METHOD']=='POST'){
 			$_POST= filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
 			$customer_id = $_POST['customer_id'];
 			$row = $this->recordsModel->getResponses($customer_id);
 			echo json_encode($row);
 		}
+	}
+
+	public function updateRecord(){
+		if($_SERVER['REQUEST_METHOD']=='POST'){
+			$_POST= filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+			$data=[
+				"first_name"=>trim(ucfirst(strtolower($_POST['firstname_edit']))),
+				"second_name"=>trim(ucfirst(strtolower($_POST['lastname_edit']))),
+				"email"=>trim(strtolower($_POST['email_edit'])),
+				"dob"=>trim($_POST['dob_edit']),
+				"phone"=>trim($_POST['phone_edit']),
+				"ssn"=>trim($_POST['ssn_edit']),
+				"address1"=>trim($_POST['address1_edit']),
+				"address2"=>trim($_POST['address2_edit']),
+				"city"=>trim($_POST['city_edit']),
+				"state"=>trim($_POST['state_edit']),
+				"zipcode"=>trim($_POST['zipcode_edit']),
+				"id"=>trim($_POST['id'])
+			];
+
+			$result = $this->enrollsModel->updateDataById($data,"lifeline_records");
+			$response = ["status"=>$result];
+			echo json_encode($response);
+		}
+	}
+
+	public function changeStatus(){
+		if($_SERVER['REQUEST_METHOD']=='POST'){
+			$_POST= filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+			$id = $_POST['id_order'];
+			$order_status = $_POST['order_status'];
+			//$order = $this->recordsModel->getOrder($orderId);
+			$orderData=[
+				"order_status"=>$order_status,
+				"id"=>$id
+			];
+			if($order_status != ""){
+				$this->enrollsModel->updateDataById($orderData,"lifeline_records");
+				$response = array (
+				 'response' => 'OK', 
+			 	);
+			}else{
+				$response = array (
+				 'response' => 'Missing information', 
+			 	);
+			}
+			echo json_encode($response);
+		}
+	}
+
+	public function saveNote(){
+		
+		if($_SERVER['REQUEST_METHOD']=='POST'){
+			$_POST= filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+			$orderId = $_POST['customer_id'];
+			$msg = $_POST['internal'];
+			$id_user = $_POST['id_user'];
+			$username = $_POST['user_name']; 
+			//$order = $this->recordsModel->getOrder($orderId);
+			//$today = date('Y-m-d H:i:s');
+						
+			$notesData=[
+				"customer_id"=>$orderId,
+				"type_note"=>"Note",
+				"message_send"=>$msg,
+				"id_user"=>$id_user,
+				"user_name"=>$username
+				
+			];
+			if($msg != ""){
+
+				$this->recordsModel->internalNotes($notesData);
+				$response = array (
+				 'response' => 'OK', 
+			 	);
+				
+			}else{
+				$response = array (
+				 'response' => "Missing information",
+			 	);
+			}
+						
+			echo json_encode($response);
+		}
+	}
+
+	public function shockwaveProcess($customerId){
+      //'G-SN3C0031'
+      
+        $customerData = $this->enrollsModel->getCustomerData($customerId);
+       
+        if($customerData && $customerData[0]['customer_id']){
+         
+        $credentials=$this->enrollsModel->getCredentials();
+        $processData['customer_id']=$customerId;
+    
+        $createResponse=create_shockwave_accountTEST2($customerData[0],$credentials[0]);
+        
+        $processData['process_status']="addSubscriberOrder API";
+        $this->enrollsModel->updateData($processData,'lifeline_records');
+        
+        $saveCreateLog=[
+          "customer_id"=>$customerId,
+          "url"=>$createResponse['url'],
+          "request"=>$createResponse['request'],
+          "response"=>$createResponse['response'],
+          "title"=>$createResponse['title']
+        ];
+        
+        $this->enrollsModel->saveData($saveCreateLog,'lifeline_apis_log');
+        if($createResponse['status']=="success"){
+          
+          if($createResponse['order_id']>0){
+            $dataOrder=[
+                "customer_id"=>$customerId,
+                "order_id"=>$createResponse['order_id'],
+                "account"=>$createResponse['account'],
+                "acp_status"=>$createResponse['acp_status'],
+                "status_text"=>$createResponse['status_text'],
+                "process_status"=>"saving Order ID > 0"
+              ];
+              $this->enrollsModel->updateData($dataOrder,"lifeline_records");
+
+            $consentFile64=getConsentFile($createResponse['order_id']);
+
+              $processData['process_status']="generating consent File";
+              $this->enrollsModel->updateData($processData,'lifeline_records');
+            // exit();
+            if($consentFile64 && $consentFile64['status']=="success"){
+              //echo "base64 success";
+              $fileData = [
+                "customer_id"=>$customerData[0]['customer_id'],
+                "filepath"=>$consentFile64['URL'],
+                "type_doc"=>"Consent"
+              ];
+              $uploadConsent=UploadDocumentTest($credentials[0], $createResponse['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
+              //$uploadConsent['customer_id']=$customerId;
+              $processData['process_status']="submitting Consent API";
+              $this->enrollsModel->updateData($processData,'lifeline_records');
+              $saveCreateLog=[
+                "customer_id"=>$customerId,
+                "url"=>$uploadConsent['url'],
+                "request"=>$uploadConsent['request'],
+                "response"=>json_encode($uploadConsent['response']),
+                "title"=>$uploadConsent['title']
+              ];
+              $this->enrollsModel->saveData($saveCreateLog,'lifeline_apis_log');
+              if($uploadConsent['status']=="success"){
+                
+                $fileData['to_unavo']='1';
+                $result=[
+                  "status"=>"success",
+                  "msg"=>"Application and Consent file submitted",
+				  "order_id"=>$createResponse['order_id'],
+					"account"=>$createResponse['account'],
+					"acp_status"=>$createResponse['acp_status'],
+					"status_text"=>$createResponse['status_text'],
+                ];
+              }else{
+                  $result=[
+                  	"status"=>"success",
+                  	"msg"=>"Application submitted but Consent Fail",
+				  	"order_id"=>$createResponse['order_id'],
+                	"account"=>$createResponse['account'],
+               		"acp_status"=>$createResponse['acp_status'],
+                	"status_text"=>$createResponse['status_text']
+                ];
+              }
+              $fileData['statusScreen']=($this->enrollsModel->saveData($fileData,'lifeline_documents'))?true:false;
+              
+              
+              //echo "after orderId>0";
+              $dataOrder=[
+                "customer_id"=>$customerId,
+                "process_status"=>$result['msg']
+              ];
+              $this->enrollsModel->updateData($dataOrder,"lifeline_records");
+              //   $result = [
+              //   "status"=>"success",
+              //   "msg"=>"Shockwave process Success"
+              // ];
+            }else{
+              //echo "base64 error";
+              $result=[
+                "status"=>"error",
+                "msg"=>"We couldn't create a consent file",
+				"order_id"=>$createResponse['order_id'],
+                	"account"=>$createResponse['account'],
+               		"acp_status"=>$createResponse['acp_status'],
+                	"status_text"=>$createResponse['status_text']
+              ];
+               $processData['process_status']="Couldn't create a consent file";
+              $this->enrollsModel->updateData($processData,'lifeline_records');
+            }
+            
+            //print_r($result);
+          }else{
+              //echo "else orderId 0";
+            $dataOrder=[
+              "customer_id"=>$customerId,
+              "order_id"=>$createResponse['order_id'],
+              "account"=>$createResponse['account'],
+              "acp_status"=>$createResponse['acp_status'],
+              "status_text"=>$createResponse['status_text'],
+              "process_status"=>"Shockwave process success"
+            ];
+            $this->enrollsModel->updateData($dataOrder,"lifeline_records");
+              $result = [
+              "status"=>"success",
+              "msg"=>"Shockwave process Success",
+			  "order_id"=>$createResponse['order_id'],
+			  "acp_status"=>$createResponse['acp_status'],
+              "status_text"=>$createResponse['status_text'],
+            ];
+          }
+          //print_r($result);
+
+        }else{
+          
+          $result = [
+          "status"=>"error",
+          "msg"=>"Something went wrong submitting your application"
+        ];
+        $processData['process_status']="Something went wrong submitting your application";
+        $this->enrollsModel->updateData($processData,'lifeline_records');
+        }
+        //print_r($result);
+      }else{
+        $result = [
+          "status"=>"error",
+          "msg"=>"Invalid Customer ID"
+        ];
+      }
+      //print_r($result);
+      echo json_encode($result);
+    }
+
+	public function checknlad(){
+		if($_SERVER['REQUEST_METHOD']=='POST'){
+			$_POST= filter_input_array(INPUT_POST,FILTER_SANITIZE_STRING);
+			$orderId = $_POST['id_order'];
+			$order = $this->recordsModel->getOrder($orderId);
+			$credentials=$this->enrollsModel->getCredentials();
+			$cred = [
+				"CLECID"=> $credentials[0]['CLECID'],
+				"UserName"=> $credentials[0]['UserName'],
+				"TokenPassword"=> $credentials[0]['TokenPassword'],
+				"PIN"=> $credentials[0]['PIN']
+			];
+			$payload = array(
+				"Credential"=>$cred,
+				"SubscriberOrderId"=>$order['order_id'],
+ 				"Author"=>$credentials[0]['author'],
+ 				"RepNotAssisted"=>true
+			);
+			$mycurl = new Curl();
+			//echo json_encode($payload);
+			$url2="https://wirelessapi.shockwavecrm.com/PrepaidWireless/NationalVerifierEligibilityCheck";
+			$request2 = json_encode($payload);
+			$header2 = array('Content-Type: application/json');
+			$orderres = $mycurl->postJsonAuth($url2,$request2,$header2);
+			//echo $orderres;
+			$response2 = json_decode($orderres,true);
+			$nlad=array(
+				"id"=>$order['id'],
+				"status_text"=>$response2['StatusText']
+			);
+			$this->recordsModel->updateOrder($nlad);
+			$this->recordsModel->saveApiLog($order['customer_id'],$url2,$request2,$orderres,'checkNlad');
+			echo $orderres;
+		}
+	}
+
+	public function getDataReport()
+	{
+		$excelData = $this->recordsModel->getReport();
+		//print_r($row);
+		//echo json_encode($row);
+		//print("<pre>".print_r($excelData,true)."</pre>");
+		$date = date('YmdHis');
+		$fileName = 'LL_Orders_Report_' . $date . '.csv';
+		//$file = fopen($fileName, 'w');
+
+		// Set headers to indicate that this is a CSV file
+		header('Content-Type: text/csv; charset=utf-8');
+		header('Content-Disposition: attachment; filename=' . $fileName);
+
+		// Open output stream in PHP (instead of writing to a file)
+		$output = fopen('php://output', 'w');
+
+		// Write the header row (column names)
+		fputcsv($output, array_keys($excelData[0]));
+
+		// Write each row of the data array
+		foreach ($excelData as $row) {
+			fputcsv($output, $row);
+		}
+
+		// Close the output stream
+		fclose($output);
+
+		// End the script to prevent further output
+		exit;
 	}
 
 }

@@ -56,7 +56,10 @@
 											<h4>Lifeline Leads</h4>
 										</div>
 
-										<div class="col-md-6" style="text-align:right"><a class="btn btn-info text-white" id="optionStatefilter">Export States</a> <span id="msjStatefilter"></span> <a class="btn btn-success text-white" id="optionfilter">Export Data</a> <span id="msjFilter"></span> </div>
+										<div class="col-md-6" style="text-align:right">
+											<!-- <a class="btn btn-info text-white" id="optionStatefilter">Export States</a> <span id="msjStatefilter"></span>  -->
+											<a class="btn btn-success text-white" id="optionfilter">Export Data</a> <span id="msjFilter"></span> 
+										</div>
 									</div>
 									<div class="card-body">
 										<div class="row">
@@ -259,7 +262,7 @@
 							cell12.innerHTML = v.created_at;
 							//cell13.innerHTML = v.source;
 							//cell14.innerHTML = v.tookstaff;
-							cell15.innerHTML = '<div class="pull-right"><a href="edit/' + v.customer_id + '" class="btn btn-outline-dark btn-sm" type="button"><i class="fa fa-pencil"></i>&nbsp;Edit</a></div>';
+							cell15.innerHTML = '<div class="pull-right"><a href="'+urlroot+'/edit/' + v.customer_id + '" class="btn btn-outline-dark btn-sm" type="button"><i class="fa fa-pencil"></i>&nbsp;Edit</a></div>';
 							/*cell14.innerHTML = '<div class="pull-right"><button class="btn btn-outline-primary btn-sm modalView" type="button" style="margin-right: 10px;" data-idorder="'+v.id+'"><i class="fa fa-eye"></i>&nbsp;View</button><a href="https://secure-order-forms.com/surgephone/acp_landings/dashboard/records/edit/'+v.id+'" class="btn btn-outline-dark btn-sm" type="button"><i class="fa fa-pencil"></i>&nbsp;Edit</a></div>';
 							 */
 
@@ -394,7 +397,7 @@
     
 
     function getProgramName($program) {
-		
+		$prog = "";
 			switch ($program) {
 				case '100000':
 					$prog = "Federal public housing";
@@ -459,4 +462,17 @@
   const data = await response.json(); // or response.text(), etc.
   return data['name'];
 }
+
+$('#optionfilter').click(function() {
+				var tokenqury = $("#tokenfillter").val();
+				$("#msjFilter").hide();
+				$("#msjFilter").append("<iframe src='"+urlroot+"/getDataReport' title='Reports'></iframe>");
+				//console.log("<iframe src='"+urlroot+"/getDataReport' title='Reports'></iframe>")
+			});
+
+// $('#optionStatefilter').click(function() {
+// 				var tokenqury = $("#tokenfillter").val();
+// 				$("#msjStatefilter").hide();
+// 				$("#msjStatefilter").append("<iframe src='"+urlroot+"'getStatesReport' title='Reports'></iframe>");
+// 			});
 </script>

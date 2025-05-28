@@ -39,6 +39,11 @@ class Enroll {
         $this->db->updateQuery($table,$data,"customer_id=:customer_id");
     }
 
+    public function updateDataById($data,$table){
+       $result =  $this->db->updateQuery($table,$data,"id=:id");
+       return $result;
+    }
+
     public function updateCusId($lastId,$customerId,$table){
         $data=[
             "id"=>$lastId,

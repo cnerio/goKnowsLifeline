@@ -15,7 +15,14 @@ class Record {
 		"response"=>$response,
 		"title"=>$title
 		];
-		$this->db->insertQuery("c1_surgephone.agent_acp_apis_log",$data);
+		$this->db->insertQuery("lifeline_apis_log",$data);
+	}
+
+	public function getReport()
+	{
+		$this->db->query('SELECT arc.customer_id as "CUSTOMER_ID",arc.first_name as "FIRST NAME",arc.second_name as "LAST NAME",arc.phone_number as "PHONE NUMBER", arc.email as "EMAIL",arc.dob as "DOB",arc.address1 as "ADDRESS1",arc.address2 as "ADDRESS2",arc.city as "CITY",arc.state as "STATE",arc.zipcode as "ZIPODE", arc.program_before as "PROGRAM BEFORE", ebp.name as "PROGRAM BENEFIT",arc.order_id as "ORDER ID",arc.account as "ACCOUNT",arc.acp_status as "STATUS",arc.company as "COMPANY ENROLLED",arc.created_at as "CREATED AT" FROM lifeline_records arc LEFT JOIN lifeline_programs ebp ON ebp.id_program=arc.program_benefit WHERE order_id is not null ORDER BY id desc;');
+		$getData = $this->db->resultSet();
+		return $getData;
 	}
 	
 	public function internalNotes($data){
@@ -28,7 +35,7 @@ class Record {
 			"id_script"=>$id_script
 			"id_user"=>$id_user
 		];*/
-		$this->db->insertQuery("c1_surgephone.internal_notes",$data);
+		$this->db->insertQuery("internal_notes",$data);
 	}
 	
 	public function updateOrder($data){
@@ -84,7 +91,7 @@ class Record {
 	
 	
 	public function getOrder($orderid){
-		$this->db->query('SELECT ar.id,ar.customer_id,ar.first_name,ar.second_name,ar.phone_number,ar.email,ar.address1,ar.address2,ar.city,ar.state,ar.zipcode,ar.program_before,ar.program_benefit,ar.dob,ar.source,ar.fcc_agreement,ar.transferconsent,ar.order_status,ar.account,ar.order_id,ar.company,ar.acp_status,ed.filename,ar.ssn,ar.tookstaff,ar.shockwave_id,ar.surgepays_id FROM lifeline_records ar LEFT JOIN c1_surgephone.ebb_documents ed ON ed.customer_id = ar.customer_id WHERE ar.id=:id');
+		$this->db->query('SELECT * FROM go_knows.lifeline_records WHERE id=:id');
 		$this->db->bind("id",$orderid);
 		$getOrder = $this->db->single();
 		return $getOrder;
@@ -149,4 +156,6 @@ class Record {
 		$row = $this->db->resultSet();
 		return $row;
 	}
+
+
 }

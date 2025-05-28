@@ -69,11 +69,11 @@
           "second_name"=>trim(ucfirst(strtolower($_POST['lastname']))),
           "ssn"=>trim($_POST['ssn']),
           "dob"=>$dob,
-          "email"=>trim($_POST['email']),
+          "email"=>trim(strtolower($_POST['email'])),
           "phone_number"=>$phonenumber,
           "address1"=>trim($_POST['address1']),
           "address2"=>trim($_POST['addess2']),
-          "city"=>$_POST['city'],
+          "city"=>trim(ucfirst(strtolower($_POST['city']))),
           "state"=>$_POST['state'],
           "zipcode"=>$_POST['zipcode'],
           "shipping_address1"=>(isset($_POST['shipaddress1'])?$_POST['shipaddress1']:null),
@@ -176,18 +176,17 @@
       //'G-SN3C0031'
       
         $customerData = $this->enrollModel->getCustomerData($customerId);
-        //print_r($customerData);
-        //exit();
+       
         if($customerData && $customerData[0]['customer_id']){
+         
         $credentials=$this->enrollModel->getCredentials();
         $processData['customer_id']=$customerId;
-        // print_r($credentials);
-        // exit();
-        $createResponse=create_shockwave_account($customerData[0],$credentials[0]);
-        // print_r($createResponse);
+    
+        $createResponse=create_shockwave_accountTEST2($customerData[0],$credentials[0]);
+        
         $processData['process_status']="addSubscriberOrder API";
         $this->enrollModel->updateData($processData,'lifeline_records');
-        // exit();
+        
         $saveCreateLog=[
           "customer_id"=>$customerId,
           "url"=>$createResponse['url'],
@@ -195,10 +194,21 @@
           "response"=>$createResponse['response'],
           "title"=>$createResponse['title']
         ];
+        
         $this->enrollModel->saveData($saveCreateLog,'lifeline_apis_log');
         if($createResponse['status']=="success"){
           
           if($createResponse['order_id']>0){
+            $dataOrder=[
+                "customer_id"=>$customerId,
+                "order_id"=>$createResponse['order_id'],
+                "account"=>$createResponse['account'],
+                "acp_status"=>$createResponse['acp_status'],
+                "status_text"=>$createResponse['status_text'],
+                "process_status"=>"saving Order ID > 0"
+              ];
+              $this->enrollModel->updateData($dataOrder,"lifeline_records");
+
             $consentFile64=$this->getConsentFile($createResponse['order_id']);
             // print_r($consentFile64);
               $processData['process_status']="generating consent File";
@@ -211,7 +221,7 @@
                 "filepath"=>$consentFile64['URL'],
                 "type_doc"=>"Consent"
               ];
-              $uploadConsent=UploadDocument($credentials[0], $createResponse['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
+              $uploadConsent=UploadDocumentTest($credentials[0], $createResponse['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
               //$uploadConsent['customer_id']=$customerId;
               $processData['process_status']="submitting Consent API";
               $this->enrollModel->updateData($processData,'lifeline_records');
@@ -242,10 +252,6 @@
               //echo "after orderId>0";
               $dataOrder=[
                 "customer_id"=>$customerId,
-                "order_id"=>$createResponse['order_id'],
-                "account"=>$createResponse['account'],
-                "acp_status"=>$createResponse['acp_status'],
-                "status_text"=>$createResponse['status_text'],
                 "process_status"=>$result['msg']
               ];
               $this->enrollModel->updateData($dataOrder,"lifeline_records");

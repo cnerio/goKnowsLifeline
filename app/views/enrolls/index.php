@@ -263,7 +263,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                 </div>
                             </div>
                             <input type="hidden" id="url" name="url" value="<?php echo $full_url; ?>">
-                            <input type="hidden" id="company" name="company" value="GOKNOWS">
+                            <input type="hidden" id="company" name="company" value="GOTECH">
                         </section>
 
                         <h3>Elegibility</h3>

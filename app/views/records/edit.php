@@ -9,7 +9,7 @@
 						<div class="col-md-12">
 							<nav aria-label="breadcrumb">
 								<ol class="breadcrumb">
-									<li class="breadcrumb-item"><a href="lifelineleads.php">Back</a></li>
+									<li class="breadcrumb-item"><a href="<?php echo URLROOT; ?>/records">Back</a></li>
 									<li class="breadcrumb-item active" aria-current="page">Edit</li>
 								</ol>
 							</nav>
@@ -21,7 +21,7 @@
 						<div class="col-md-3">
 							<div class="card">
 								<div class="card-body" id="demographics-card">
-									<h4 class="card-title pb-2">Demographics <a href="" id="editBtn" data-toggle="modal" data-target="#modalEditRecord"><i class="fa fa-pencil"></i></a></h4>
+									<h4 class="card-title pb-2">Demographics <a href="" id="editBtn" data-bs-toggle="modal" data-bs-target="#modalEditRecord"><i class="fa fa-pencil"></i></a></h4>
 									<p><b>First Name: </b><?php echo $data['first_name']; ?></p>
 									<p><b>Last Name:</b> <?php echo $data['second_name']; ?></p>
 									<p><b>Email:</b> <?php echo $data['email']; ?></p>
@@ -45,11 +45,7 @@
 									<p><b>Agree Terms & Conditions:</b> <?php echo $data['agree_terms']; ?></p>
 									<p><b>Agree received SMS:</b> <?php echo $data['agree_sms']; ?></p>
 									<p><b>Order status:</b> <?php echo $data['order_status']; ?></p>
-									<?php if ($data['source'] == "" || $data['source'] == NULL) { ?>
-										<p id="acpSource"><b>Source: </b><i style="cursor: pointer;" class="fa fa-plus ml-1" onclick="addSource()"></i></p>
-									<?php } else { ?>
-										<p><b>Source:</b> <?php echo $data['source']; ?></p>
-									<?php } ?>
+								
 									<?php if ($data['order_id'] > 0) { ?>
 										<p id="newOrderID"><b>Order ID:</b> <?php echo $data['order_id']; ?></p>
 										<p><b>Account #:</b> <?php echo $data['account']; ?></p>
@@ -121,7 +117,7 @@
 												<?php } else {
 												?>
 
-													<button id="createOrder" data-id_order="<?php echo $data['id']; ?>" type="button" class="btn btn-primary">Create Order</button>
+													<button id="createOrder" data-id_order="<?php echo $data['customer_id']; ?>" type="button" class="btn btn-primary">Create Order</button>
 													<br>
 													<div id="resCreateOrder" class="pt-3 pb-3"></div>
 
@@ -163,7 +159,7 @@
 											<form id="status-form" action="#" method="post" enctype="application/x-www-form-urlencoded">
 												<div class="row">
 													<div class="col-md-12">
-														<select class="form-control auto-size mb-3" id="order_status" name="order_status">
+														<select class="form-select auto-size mb-3" id="order_status" name="order_status">
 															<option value="">Please select</option>
 															<option value="Pending" <?php if ($data['order_status'] == 'Pending') {
 																						echo 'selected="selected"';
@@ -183,7 +179,7 @@
 														</select>
 														<input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id'] ?>" />
 														<input type="hidden" name="username" id="username" value="<?php echo $_SESSION['email']; ?>">
-														<input type="submit" id="submit-status" class="btn btn-outline-secondary" value="Change Status">
+														<input type="submit" id="submit-status" class="btn btn-secondary" value="Change Status">
 													</div>
 												</div>
 											</form>
@@ -192,7 +188,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="row mb-3">
+							<!-- <div class="row mb-3">
 								<div class="col-md-12">
 									<div class="card">
 										<div class="card-body">
@@ -232,7 +228,7 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							</div> -->
 							<!--/**************INTERNAL NOTES*************/-->
 							<div class="card">
 								<div class="card-body">
@@ -240,7 +236,7 @@
 										<div class="col-md-12">
 											<nav>
 												<div class="nav nav-tabs" id="nav-tab" role="tablist">
-													<a class="nav-item nav-link active" id="nav-internal-tab" data-toggle="tab" href="#internal-update" role="tab" aria-controls="internal_update" aria-selected="true">Internal Notes</a>
+													<a class="nav-item nav-link active" id="nav-internal-tab" data-bs-toggle="tab" href="#internal-update" role="tab" aria-controls="internal_update" aria-selected="true">Internal Notes</a>
 													<!-- <a class="nav-item nav-link" id="nav-contact-tab" data-bs-toggle="tab" href="#sms" role="tab" aria-controls="sms" aria-selected="false">SMS</a> -->
 													<a class="nav-item nav-link" id="nav-profile-tab" data-bs-toggle="tab" href="#logs" role="tab" aria-controls="email" aria-selected="false">Showckwave Log</a>
 												</div>
@@ -261,14 +257,21 @@
 															</div>
 															<div class="col-lg-2 col-md-12 mb-2">
 																<input type="hidden" id="customer_id" name="customer_id" value="<?php echo $data['customer_id']; ?>" />
-																<input type="hidden" name="user_id" id="user-logged" value="<?php echo $_SESSION['user_id']; ?>" />
+																<input type="hidden" name="user_id" id="user_id" value="<?php echo $_SESSION['user_id']; ?>" />
 																<input type="hidden" name="user_name" id="user_name" value="<?php echo $_SESSION['name']; ?>" />
 
 																<input type="hidden" name="func" value="internalupdate" />
-																<button value="Submit Note" id="send_internal" data-idcontract="<?php //echo $main_row['id_contract']; 
-																																?>" class="btn btn-outline-secondary" style="width:100%">Submit Note</button>
+																<button value="Submit Note" id="send_internal"  class="btn btn-secondary" >Submit&nbsp;Note</button>
 															</div>
 														</form>
+													</div>
+													<div>
+														<div class="row">
+															<div class="col-12 col-md-12" id="msg-result"></div>
+															<div class="col-12 col-md-12" id="wrapp-communication"></div>
+															<div class="col-12 col-md-12" id="wrapp-notes">
+															</div>
+														</div>
 													</div>
 												</div>
 												<div class="tab-pane fade" id="sms" role="tabpanel" aria-labelledby="sms-tab">
@@ -298,10 +301,8 @@
 												<div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="profile-tab">
 													<div class="row">
 														<div class="col">
-															<div class="card">
-																<div class="card-body">
 																	<div class="row">
-																		<div class="col-12 col-md-12">
+																		<div class="col-12 col-md-12 mt-2 mb-3">
 																			<label for="ACP_Messages">APIS Response</label>
 																		</div>
 																		<div class="col-12 col-md-12">
@@ -309,8 +310,6 @@
 																			</div>
 																		</div>
 																	</div>
-																</div>
-															</div>
 														</div>
 													</div>
 													
@@ -329,19 +328,7 @@
 							</div>
 							<!--/***********************************/-->
 							<!--Internal Update Sent-->
-							<!-- <div class="card">
-								<div class="card-body">
-									<div class="row">
-										<div class="col-12 col-md-12">
-											<label for="Lead_Messages">Internal Notes - SMS - Emails</label>
-										</div>
-										<div class="col-12 col-md-12" id="msg-result"></div>
-										<div class="col-12 col-md-12" id="wrapp-communication"></div>
-										<div class="col-12 col-md-12" id="wrapp-notes">
-										</div>
-									</div>
-								</div>
-							</div> -->
+							
 							<!--/***********************************/-->
 						</div>
 					</div>
@@ -357,13 +344,13 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalEditRecordLabel">Edit Record</h5>
-					<button type="button" class="close closeRecordEditModal" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close closeRecordEditModal" data-bs-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<form id="formRecordEdit">
 					<div class="modal-body">
-						<div class="form-row">
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group"><label>First Name</label>
 									<input name="firstname_edit" id="firstname_edit" type="text" class="form-control" value="<?php echo $data['first_name']; ?>">
@@ -376,7 +363,7 @@
 							</div>
 						</div>
 
-						<div class="form-row">
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group"><label>Email</label>
 									<input name="email_edit" id="email_edit" type="text" class="form-control" value="<?php echo $data['email']; ?>">
@@ -388,7 +375,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="form-row">
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group"><label>Contact Phone</label>
 									<input name="phone_edit" id="phone_edit" type="text" class="form-control" value="<?php echo $data['phone_number']; ?>">
@@ -401,7 +388,7 @@
 							</div>
 						</div>
 
-						<div class="form-row">
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="">Street</label>
@@ -416,7 +403,7 @@
 							</div>
 						</div>
 
-						<div class="form-row">
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="">City</label>
@@ -426,7 +413,7 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="">State</label>
-									<select class="form-control form-control" name="state_edit" id="state_edit" aria-required="true" required>
+									<select class="form-select" name="state_edit" id="state_edit" aria-required="true" required>
 										<option value="">Select State</option>
 										<option value="AL" <?php echo ($data['state'] == "AL") ? "selected" : "" ?>>Alabama</option>
 										<option value="AK" <?php echo ($data['state'] == "AK") ? "selected" : "" ?>>Alaska</option>
@@ -467,6 +454,7 @@
 										<option value="OK" <?php echo ($data['state'] == "OK") ? "selected" : "" ?>>Oklahoma</option>
 										<option value="OR" <?php echo ($data['state'] == "OR") ? "selected" : "" ?>>Oregon</option>
 										<option value="PA" <?php echo ($data['state'] == "PA") ? "selected" : "" ?>>Pennsylvania</option>
+										<option value="PA" <?php echo ($data['state'] == "PR") ? "selected" : "" ?>>Puerto Rico</option>
 										<option value="RI" <?php echo ($data['state'] == "RI") ? "selected" : "" ?>>Rhode Island</option>
 										<option value="SC" <?php echo ($data['state'] == "SC") ? "selected" : "" ?>>South Carolina</option>
 										<option value="SD" <?php echo ($data['state'] == "SD") ? "selected" : "" ?>>South Dakota</option>
@@ -485,7 +473,7 @@
 							</div>
 						</div>
 
-						<div class="form-row">
+						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="">Zipcode</label>
@@ -498,16 +486,16 @@
 
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary closeRecordEditModal" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-secondary closeRecordEditModal" data-bs-dismiss="modal">Close</button>
 						<input type="hidden" value="Addusernew" name="acttion">
-						<input type="hidden" id="idlogui" name="idlogui" value='<?php echo $id_user;  ?>'>
+						<input type="hidden" id="idlogui" name="idlogui" value='<?php echo $_SESSION['user_id'];  ?>'>
 						<button type="submit" id="savenew" class="btn btn-primary">Save</button>
 					</div>
 					<div style="padding: 13px;" id="msjresusersAdd">
 					</div>
-					<input type="hidden" value="<?php echo $id ?>" id="leadId">
+					<input type="hidden" value="<?php echo $data['id']; ?>" id="leadId">
 					<input type="hidden" value="<?php echo $data['company']; ?>" id="company">
-					<div class="form-row">
+					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
 								<div id="update-record-result" class="mt-2"></div>
@@ -525,13 +513,13 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<h5 class="modal-title" id="modalAddNoteLabel">Add internal note</h5>
-					<button type="button" class="close closeAddNoteModal" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close closeAddNoteModal right" data-bs-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<form id="formAddNote">
 					<div class="modal-body">
-						<div class="form-row">
+						<div class="row">
 							<div class="col-md-12">
 								<div class="form-group"><label>Note:</label>
 									<textarea class="form-control" id="internalNote" rows="5"></textarea>
@@ -541,11 +529,11 @@
 
 					</div>
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary closeAddNoteModal" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-secondary closeAddNoteModal" data-bs-dismiss="modal">Close</button>
 						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
-					<input type="hidden" value="<?php echo $id ?>" id="leadId">
-					<div class="form-row">
+					<!-- <input type="hidden" value="<?php echo $data['customer_id']; ?>" id="leadId"> -->
+					<div class="row">
 						<div class="col-md-12">
 							<div class="form-group">
 								<div id="add-internal-note" class="mt-2"></div>
@@ -652,11 +640,11 @@
 
 							} else {
 
-								html_head = '<div class="card-header"><h5 class="card-title commu-title">INTERNAL UPDATE</h5><small style="float:right;">' + val.date_note + ' | ' + val.user_name + '</small></div>';
+								html_head = '<div class="card-header"><h6 class="card-title commu-title">NOTE <small style="float:right;">' + val.date_note + ' | ' + val.user_name + '</small></h6></div>';
 								html_body = '<p class="card-text">' + val.message_send + '</p>'
 							}
 
-							notes_html += '<div class="card">' + html_head + '<div class="card-body">' + html_body + '</div></div>';
+							notes_html += '<div class="card mb-2">' + html_head + '<div class="card-body">' + html_body + '</div></div>';
 
 						});
 						$('#wrapp-notes').html(notes_html);
@@ -708,7 +696,7 @@
 					$.each(Obj, function(key, value) {
 						//console.log(value.type_id);
 						if (response.length > 0) {
-							$("#staff-select").append(`<option value="${value.username}" user-id="${value.user_id}" user-email="${value.email}">${value.username}</option>`);
+							$("#staff-select").append(`<option value="${value.name}" user-id="${value.user_id}" user-email="${value.email}">${value.name}</option>`);
 						} else {
 							$("#staff-select").append(`<option value="0">No User Available</option>`);
 						}
@@ -722,7 +710,7 @@
 
 			var success_response = '<div class="alert alert-success" role="alert">Success</div>';
 			var fail_response = '<div class="alert alert-danger" role="alert">Error, something is missing</div>';
-			var source = '<?php echo $data['source']; ?>';
+			
 			var customer_id = '<?php echo  $data['customer_id']; ?>';
 			//getScripts(source);
 			getStaffList();
@@ -736,16 +724,12 @@
 			$("#newOrderIdText").hide();
 
 			$("#createOrder").click(function() {
-				var id_order = $(this).data("id_order");
+				var customer_id = $(this).data("id_order");
 				$("#creatingOrderSpinner").show();
 				$.ajax({
-					url: 'https://secure-order-forms.com/surgephone/LifelineProject/Endpoints/processLifelineOrderByOrderIdLifeline',
-					type: "POST",
+					url: urlroot+'shockwaveProcess/'+customer_id,
+					type: "GET",
 					dataType: "json",
-					data: {
-						id_order: id_order
-					},
-
 					success: function(data) {
 						$("#creatingOrderSpinner").hide();
 
@@ -753,8 +737,8 @@
 
 						if (data.status) {
 							$("#createOrder").prop("disabled", true);
-							$("#resCreateOrder").html('<div class="alert alert-success" role="alert">'+ data.msg + '<br> ' + data.msgDetail+'</div>');
-
+							$("#resCreateOrder").html('<div class="alert alert-success" role="alert">'+ data.msg + '<br> ' + data.status_text+'</div>');
+							//$("#resCreateOrder").html('<div class="alert alert-success" role="alert">'+ data.msg + '<br> ' + data.msgDetail+'</div>');
 							$("#newOrderID").html(`<b>Order ID:</b> ${data.order_id}`)
 
 							// $("#order_area").html(`Check NLAD Status <button id="checknlad" data-id_order="${data.order_id}" type="button" class="btn btn-primary" onclick="runChecknlad()">Check</button>
@@ -772,7 +756,8 @@
 							// $("#newACPStatus").html(`<b>Nlad Status:</b> ${myObj.Status}`);
 
 						} else {
-							$("#resCreateOrder").html('<div class="alert alert-danger" role="alert">'+ data.msg + '<br> ' + data.msgDetail+'</div>');
+							$("#resCreateOrder").html('<div class="alert alert-danger" role="alert">'+ data.msg + '</div>');
+							//$("#resCreateOrder").html('<div class="alert alert-danger" role="alert">'+ data.msg + '<br> ' + data.msgDetail+'</div>');
 						}
 
 					}
@@ -828,6 +813,9 @@
 						} else {
 							$("#communication-result").html(fail_response)
 						}
+						setTimeout(function() {
+							$("#communication-result").html('')
+						}, 5000);
 						$("#sms-textarea").val('');
 					}
 				});
@@ -836,13 +824,15 @@
 			$("#send_internal").click(function() {
 				event.preventDefault();
 
-				var id_order = $("#id_order").val();
-				var id_user = $("#id_user").val();
+				var customer_id = $("#customer_id").val();
+				var id_user = $("#user_id").val();
+				var username = $("#user_name").val();
 				var note = $("#internal").val();
 
 				var parameter = {
-					"id_order": id_order,
+					"customer_id": customer_id,
 					"id_user": id_user,
+					"user_name":username,
 					"internal": note,
 				}
 				console.log(parameter);
@@ -863,6 +853,9 @@
 						} else {
 							$("#communication-result").html(fail_response)
 						}
+						setTimeout(function() {
+							$("#communication-result").html('')
+						}, 5000);
 						$("#internal").val('');
 					}
 				});
@@ -1064,15 +1057,15 @@
 					let programs = JSON.parse(data);
 
 					$("#pBenefit").html("");
-					$("#pBenefit").html(`<b>Program Benefit: <i style="cursor: pointer" class="fa fa-times" aria-hidden="true" onclick="dismissPBenefitEdit()"></i></b><br/><select id="pBenefitSelect" class="form-control" onchange="updatePBenefit()"></select>`);
+					$("#pBenefit").html(`<b>Program Benefit: <i style="cursor: pointer" class="fa fa-times" aria-hidden="true" onclick="dismissPBenefitEdit()"></i></b><br/><select id="pBenefitSelect" class="form-select" onchange="updatePBenefit()"></select>`);
 					programs.forEach((p) => {
-						if (p.description == lastPBenefitValue) {
+						if (p.name == lastPBenefitValue) {
 							$("#pBenefitSelect").append(`
-						<option selected value="${p.type_id}">${p.description}</option>	
+						<option selected value="${p.id_program}">${p.name}</option>	
 					`);
 						} else {
 							$("#pBenefitSelect").append(`
-						<option value="${p.type_id}">${p.description}</option>
+						<option value="${p.id_program}">${p.name}</option>
 					`);
 						}
 					})
@@ -1086,7 +1079,7 @@
 		function editPBefore() {
 			let lastPBeforeValue = $("#pBefore span").text();
 			$("#pBefore").html("");
-			$("#pBefore").html(`<b>Program Before: <i style="cursor: pointer" class="fa fa-times" aria-hidden="true" onclick="dismissPBeforeEdit()"></i></b><br/><select id="pBeforeSelect" class="form-control" onchange="updatePBefore()"></select>`);
+			$("#pBefore").html(`<b>Program Before: <i style="cursor: pointer" class="fa fa-times" aria-hidden="true" onclick="dismissPBeforeEdit()"></i></b><br/><select id="pBeforeSelect" class="form-select" onchange="updatePBefore()"></select>`);
 			if (lastPBeforeValue == "YES") {
 				$("#pBeforeSelect").append(`
 				<option selected value="YES">YES</option>
@@ -1185,17 +1178,29 @@
 			var success_response = '<div class="alert alert-success" role="alert">Success</div>';
 			var fail_response = '<div class="alert alert-danger" role="alert">Error, something is missing</div>';
 
-			var id_order = $("#id_order").val();
-			var id_user = $("#userid_active").val();
-			var username = $("#username").val();
-			var note = $("#internalNote").val();
+			// var id_order = $("#id_order").val();
+			// var id_user = $("#userid_active").val();
+			// var username = $("#username").val();
+			// var note = $("#internalNote").val();
 
-			var parameter = {
-				"id_order": id_order,
-				"id_user": id_user,
-				"user_name": username,
-				"internal": note,
-			}
+			// var parameter = {
+			// 	"id_order": id_order,
+			// 	"id_user": id_user,
+			// 	"user_name": username,
+			// 	"internal": note,
+			// }
+
+			var customer_id = $("#customer_id").val();
+				var id_user = $("#user_id").val();
+				var username = $("#user_name").val();
+				var note = $("#internalNote").val();
+
+				var parameter = {
+					"customer_id": customer_id,
+					"id_user": id_user,
+					"user_name":username,
+					"internal": note,
+				}
 			console.log(parameter);
 			$.ajax({
 				url: urlroot + '/saveNote',
@@ -1210,12 +1215,13 @@
 					var myObj = JSON.parse(data);
 					if (myObj.response == 'OK') {
 						$("#add-internal-note").html(success_response);
-						createOrderTest3();
+						createOrderTest3(customer_id);
 						setTimeout(() => {
 							$("#add-internal-note").html("");
 						}, 5000);
 						$('#modalAddNote').modal('toggle');
 						$("#defaultCheck1").prop("checked", false);
+						getNotes(customer_id);
 					} else {
 						$("#add-internal-note").html(fail_response)
 					}
@@ -1224,19 +1230,15 @@
 			});
 		}
 
-		function createOrderTest3() {
+		function createOrderTest3(customer_id) {
 			$("#creatingOrderSpinner").show();
-			var id_order = $("#id_order").val();
+			//var id_order = $("#id_order").val();
 			$.ajax({
-				url: urlroot + '/createOrder',
+				url: urlroot + 'shockwaveProcess/'+customer_id,
 
-				type: "POST",
+				type: "GET",
 
 				dataType: "json",
-
-				data: {
-					id_order: id_order
-				},
 
 				success: function(data) {
 
@@ -1249,10 +1251,10 @@
 
 					console.log(myObj);
 
-					if (myObj.SubscriberOrderID > 0) {
+					if (myObj.order_id > 0) {
 						$("#actions_error").hide();
-						$("#newOrderID").html(`<b>Order ID:</b> ${myObj.SubscriberOrderID}`)
-						$("#order_area").html(`Check NLAD Status <button id="checknlad" data-id_order="${myObj.SubscriberOrderID}" type="button" class="btn btn-primary" onclick="runChecknlad()">Check</button>
+						$("#newOrderID").html(`<b>Order ID:</b> ${myObj.order_id}`)
+						$("#order_area").html(`Check NLAD Status <button id="checknlad" data-id_order="${myObj.order_id}" type="button" class="btn btn-primary" onclick="runChecknlad()">Check</button>
 				<div id="checkingOrderSpinner">
 						<span class="loader"></span>
 					</div>
@@ -1263,10 +1265,10 @@
 							re-submit order
 						</label>
 				</div>`);
-						$("#newOrderIdText").html(`<h5>New Order ID: ${myObj.SubscriberOrderID} </h5>`);
+						$("#newOrderIdText").html(`<h5>New Order ID: ${myObj.order_id} </h5>`);
 						$("#newOrderIdText").show();
 						$("#checkingOrderSpinner").hide();
-						$("#newACPStatus").html(`<b>ACP Status:</b> ${myObj.AcpStatus}`);
+						$("#newACPStatus").html(`<b>ACP Status:</b> ${myObj.acp_status}`);
 					} else {
 						console.log("Error");
 						$("#actions_error").show();

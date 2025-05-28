@@ -31,7 +31,7 @@ $raw = file_get_contents("php://input");
 file_put_contents("receiving.txt", $raw);
 $arrayPost = json_decode($raw, true);
 
-$arrayPost['orderId']=80135;
+//$arrayPost['orderId']=80135;
 
 
 if (isset($arrayPost['orderId'])) {
@@ -149,7 +149,7 @@ if (isset($arrayPost['orderId'])) {
 function msgReturn($status, $msg, $pdfBase64 = null,$docName='',$url=null)
 
 {
-    if($status){
+    if($status=="success"){
         http_response_code(200);
     }else{
         http_response_code(400);

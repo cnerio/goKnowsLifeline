@@ -1,6 +1,7 @@
 <footer>
+     <hr />
     <div class="container py-4 py-lg-5">
-        <hr />
+       
         <div class="text-muted d-flex justify-content-between align-items-center pt-3">
             <p class="mb-0">Copyright © 2025 Go Knows</p>
             <ul class="list-inline mb-0">

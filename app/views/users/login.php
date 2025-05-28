@@ -4,13 +4,13 @@
         <div class="row">
     <div class="col-md-4 mx-auto">
         <div class="card bg-light mt-5">
-            <div class="card-header card-text">
-                <?php flash('register_success'); ?>
+            <!-- <div class="card-header card-text">
+                
                 <h2 class="card-text">User login</h2>
             <p class="card-text"><small>Please enter your username and password</small></p>
-            </div>
+            </div> -->
         
-            <div class="card-body">
+            <div class="card-body pt-4">
                 <form method="post" action="<?php echo URLROOT ;?>/users/login">
                     <div class="form-group">
                         <label for="email">Email<sub>*</sub></label>
@@ -28,6 +28,7 @@
                         <div class="row">
                             <div class="col">
                                 <input type="submit" class="btn btn-primary shadow pull-right" value="Login">
+                                <?php flash('register_success'); ?>
                             </div>
                         </div>
                     </div>

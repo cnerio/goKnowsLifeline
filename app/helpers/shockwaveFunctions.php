@@ -12,10 +12,10 @@ function create_shockwave_accountTEST($data, $customer_id, $company, $carrier, $
 			$OrderRequest = lifeline_payload($data, $credentials, $carrier, $company, $configs);
 			break;
 		case "SURGE":
-			$OrderRequest = surge_payload($data, $credentials, $carrier, $company);
+			//$OrderRequest = surge_payload($data, $credentials, $carrier, $company);
 			break;
 		case "TORCH":
-			$OrderRequest = torch_payload($data, $credentials, $carrier, $company);
+			//$OrderRequest = torch_payload($data, $credentials, $carrier, $company);
 			break;
 		default:
 			$valid = 0;
@@ -233,7 +233,7 @@ function create_shockwave_accountTEST2($data,$credentials){
     
     $url = "https://wirelessapi.shockwavecrm.com/PrepaidWireless/AddSubscriberOrderWithEBBData";
     $OrderRequest = lifeline_payload($data, $credentials);
-    $subscriberOrder["SubscriberOrderID"]=80135;
+    $subscriberOrder["SubscriberOrderID"]=rand(10000,99999);;
     $subscriberOrder["AccountNumber"]=rand(10000,99999);
     if ($subscriberOrder['SubscriberOrderID'] == 0) {
 		//$acp_status = $subscriberOrder["StatusText"];
@@ -344,10 +344,10 @@ function testcreate_shockwave_account($data, $customer_id, $company, $carrier, $
 				$OrderRequest = lifeline_payload($data, $credentials, $carrier, $company, $configs);
 				break;
 			case "SURGE":
-				$OrderRequest = surge_payload($data, $credentials, $carrier, $company, $configs);
+				//$OrderRequest = surge_payload($data, $credentials, $carrier, $company, $configs);
 				break;
 			case "TORCH":
-				$OrderRequest = torch_payload($data, $credentials, $carrier, $company, $configs);
+				//$OrderRequest = torch_payload($data, $credentials, $carrier, $company, $configs);
 				break;
 			default:
 				$valid = 0;
@@ -967,4 +967,58 @@ function SubmitIEHForm($data,$initials,$order_id,$customer_id,$company,$source,$
 		"IEHFormStatusText" => $IEHStatusText		
 	];
 }
+
+function getConsentFile($orderId){
+
+        //echo URLROOT.'/public/files/consentPDF/';
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => URLROOT.'/public/files/consentPDF/',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_POSTFIELDS =>'{
+            "orderId":'.$orderId.'
+        }',
+          CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json'
+          ),
+        ));
+
+        $response = curl_exec($curl);
+        $curl_error = curl_error($curl);
+        $curl_errno = curl_errno($curl);
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+        
+        // Step 1: Check if cURL itself failed (connection problems, timeouts, DNS, etc.)
+        if ($curl_errno) {
+            //echo "cURL error: $curl_error"; // This includes many kinds of outages
+            $result = [
+              "status"=>"error",
+              "msg"=>$curl_error
+            ];
+            // Optionally log or retry here
+        } 
+        // Step 2: Check if API returned an HTTP error
+        elseif ($http_code >= 400) {
+            //echo "API HTTP error: $http_code";
+            $result = [
+              "status"=>"error",
+              "msg"=>"HTTP ERROR CODE: ".$http_code
+            ];
+            // Optional: you might want to parse $response for error details
+        }
+        // Step 3: All good
+        else {
+            $result = json_decode($response,true);
+        }
+        return $result;
+
+    }
 
