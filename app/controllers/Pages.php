@@ -21,6 +21,10 @@
       $this->view('pages/index', $data);
     }
 
+    public function index2(){
+      $this->view('pages/index2');
+    }
+
     public function about(){
       $data = [
         'title' => 'About Us',
