@@ -103,7 +103,7 @@
 			
 		
 			//print_r($data);
-			$camposBase=array("customer_id","first_name","second_name","phone_number","email","dob","city","state","zipcode","order_id","program_benefit","created_at","source");
+			$camposBase=array("customer_id","first_name","second_name","phone_number","email","dob","city","state","zipcode","order_id","program_benefit","created_at");
 			$addWhere="";
 			$count=0;
 			for($index=0;$index<count($data['arrayCampos']);$index++){

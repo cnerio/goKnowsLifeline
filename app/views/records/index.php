@@ -47,7 +47,7 @@
 		}
 </style>
 <section class="py-5 mt-5">
-    <div class="container-fluid  py-5">
+    <div class="container-fluid py-5">
         <div class="row">
 							<div class="col">
 								<div class="card">
@@ -319,7 +319,7 @@
 			var zipcode = $("#zipcode").val().trim();
 			var order_id = $("#order_id").val().trim();
 			var program_benefit = $("#program_benefit option:selected").val();
-			var date_create = $("#date_create").val().trim();
+			var created_at = $("#date_create").val().trim();
 			//var source = $("#source").val().trim();
 			//var agent = $("#agent").val().trim();
 			//var createdat = $( "#createdat" ).val();
@@ -337,7 +337,7 @@
 				zipcode,
 				order_id,
 				program_benefit,
-				date_create,
+				created_at,
 				//source,
 				//agent
 			];
@@ -475,4 +475,12 @@ $('#optionfilter').click(function() {
 // 				$("#msjStatefilter").hide();
 // 				$("#msjStatefilter").append("<iframe src='"+urlroot+"'getStatesReport' title='Reports'></iframe>");
 // 			});
+$("#clean").on('click', function() {
+			$(".grid-filter").val('');
+			myArray = camposValue();
+			var camposAscDesc = '';
+			var example_length = 10;
+			//$(".grid-filter").change();
+			load(1, myArray, example_length, camposAscDesc);
+		});
 </script>
