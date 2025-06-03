@@ -279,7 +279,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                         <label for="eligibility_program">Select Government Program</label>
                                         <select name="eligibility_program" id="eligibility_program" class="form-control form-control-lg">
 
-                                            <option value="">Select..</option>
+                                            <!-- <option value="">Select..</option>
 
                                             <option value="100001">Supplemental Nutrition Assistance Program (Food Stamps or SNAP)</option>
 
@@ -299,7 +299,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
                                             <option value="100010">Food Distribution Program on Indian Reservations (FDPIR)</option>
 
-                                            <option value="100009">Head Start (if income eligibility criteria are met)</option>
+                                            <option value="100009">Head Start (if income eligibility criteria are met)</option> -->
 
                                         </select>
                                     </div>
@@ -493,12 +493,14 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             },
             city:{
                 required:true
+                
             },
             state:{
                 required:true
             },
             zipcode:{
-                required:true
+                required:true,
+                zipcodeMatch: true
             },
             eligibility_program:{
                 required:true
@@ -843,6 +845,38 @@ function takeScreenshot() {
     return canvas.toDataURL("image/png");
   });
 }
+
+$(document).ready(function () {
+     $.validator.addMethod("zipcodeMatch", function (value, element, params) {
+    let zipcode = $("#zipcode").val();
+    let city = $("#city").val().toLowerCase();
+    let state = $("#state").val();
+    let valid = false;
+
+    // Usamos la validación asincrónica de jQuery Validation
+    let done = this.optional(element);
+
+    $.ajax({
+      url: "https://api.zippopotam.us/us/" + zipcode,
+      dataType: "json",
+      async: false, // Necesario para trabajar con jQuery Validate directamente
+      success: function (data) {
+        let place = data.places[0];
+        let apiCity = place["place name"].toLowerCase();
+        let apiState = place["state abbreviation"];
+        //console.log(state+apiState)
+        if (city == apiCity && state == apiState) {
+          valid = true;
+        }
+      },
+      error: function () {
+        valid = false;
+      }
+    });
+
+    return done || valid;
+  }, "City or State does not match to your Zip Code.");
+})
 
     // function takescreenshot(){
     //     html2canvas(document.body).then(function(canvas) {

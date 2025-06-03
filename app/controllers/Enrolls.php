@@ -323,6 +323,76 @@
       }
     }
 
+    public function checkZipcode($zipcode,$state,$city){
+
+      $curl = curl_init();
+
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => 'http://api.zippopotam.us/us/'.trim($zipcode),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+      ));
+
+      $response = curl_exec($curl);
+
+      
+      $curl_error = curl_error($curl);
+        $curl_errno = curl_errno($curl);
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+      // Step 1: Check if cURL itself failed (connection problems, timeouts, DNS, etc.)
+        if ($curl_errno) {
+            //echo "cURL error: $curl_error"; // This includes many kinds of outages
+            $row = [
+              "status"=>"error",
+              "msg"=>$curl_error
+            ];
+            // Optionally log or retry here
+        } 
+        // Step 2: Check if API returned an HTTP error
+        elseif ($http_code >= 400) {
+            //echo "API HTTP error: $http_code";
+            $row = [
+              "status"=>"error",
+              "msg"=>"HTTP ERROR CODE: ".$http_code
+            ];
+            // Optional: you might want to parse $response for error details
+        }
+        // Step 3: All good
+        else {
+            $result = json_decode($response,true);
+            print_r($result);
+            echo $state;
+            if($result['places']){
+              if(strtoupper($state)==$result['places'][0]['state abbreviation'] && trim(ucfirst(strtolower($city)))==$result['places'][0]['place name'] ){
+                $row = [
+              "status"=>"success",
+              "msg"=>"state and city match"
+            ];
+              }else{
+                                $row = [
+              "status"=>"error",
+              "msg"=>"state and city does not match"
+            ];
+              }
+            }else{
+                              $row = [
+              "status"=>"error",
+              "msg"=>"city and state couldn't be validated "
+            ];
+
+            }
+        }
+
+        print_r($row);
+
+    }
+
     public function getConsentFile($orderId){
 
         //echo URLROOT.'/public/files/consentPDF/';

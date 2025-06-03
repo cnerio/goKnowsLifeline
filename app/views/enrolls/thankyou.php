@@ -1,5 +1,8 @@
 <?php require APPROOT . '/views/inc/header.php'; ?>
-<?php require APPROOT . '/views/inc/navbar.php'; ?>
+<?php 
+$apply=false;
+require APPROOT . '/views/inc/navbar.php'; 
+?>
 
 
 
