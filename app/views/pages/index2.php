@@ -4,16 +4,17 @@ $apply=true;
 require APPROOT . '/views/inc/navbar.php'; 
 ?>
 
-    <header class="pt-5">
+    <header class="pt-5 mb-5">
         <div class="container pt-4 pt-xl-5">
             <div class="row pt-5">
-                <div class="col-md-8 text-center text-md-start mx-auto">
+                <div class="col-md-6 text-center text-md-start mx-auto">
                     <div class="text-center">
-                        <h1 class="display-4 fw-bold mb-5">Get your <span class="underline">FREE</span> Government Wireless Service now!.</h1>
-                        <p class="fs-5 text-muted mb-5">High-Speed Data, Unlimited Talk & Text.</p>
+                        <h1 class="display-4 fw-bold">Get your <span class="underline">FREE</span> Government Wireless Service&nbsp;now!.</h1>
+                        <p class="fs-5 text-muted mb-2">High-Speed Data, Unlimited Talk & Text.</p>
+                        <div class="my-2"><a class="btn btn-primary fs-5 py-2 px-4" role="button" href="<?php echo URLROOT; ?>/enrolls">Apply Now!</a></div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-10 mx-auto">
+                <div class="col-md-6 mx-auto">
                     <div class="text-center position-relative"><img class="img-fluid" src="<?php echo URLROOT; ?>/public/img/illustrations/meeting.svg" style="width: 800px;"></div>
                 </div>
             </div>

@@ -229,10 +229,10 @@ function nladEnrollTEST($order_id, $customer_id, $company, $source)
 	];
 }
 
-function create_shockwave_accountTEST2($data,$credentials){
+function create_shockwave_accountTEST2($data,$credentials,$packages){
     
     $url = "https://wirelessapi.shockwavecrm.com/PrepaidWireless/AddSubscriberOrderWithEBBData";
-    $OrderRequest = lifeline_payload($data, $credentials);
+    $OrderRequest = lifeline_payload($data, $credentials,$packages);
     $subscriberOrder["SubscriberOrderID"]=rand(10000,99999);;
     $subscriberOrder["AccountNumber"]=rand(10000,99999);
     if ($subscriberOrder['SubscriberOrderID'] == 0) {
@@ -261,10 +261,10 @@ function create_shockwave_accountTEST2($data,$credentials){
 
 }
 
-function create_shockwave_account($data,$credentials){
+function create_shockwave_account($data,$credentials,$packages){
 
 	
-	$OrderRequest = lifeline_payload($data, $credentials);
+	$OrderRequest = lifeline_payload($data, $credentials,$packages);
 
 
 	// Make the API call
@@ -526,16 +526,30 @@ function eligibilityCheck($order_id, $customer_id, $company, $source, $configs)
 
 
 
-function lifeline_payload($data, $credentials)
+function lifeline_payload($data, $credentials,$packages)
 {
-	//print("<pre>" . print_r($configs, true) . "</pre>");
-	if (!empty($data['phone_type']) && $data['phone_type'] == 'iOS') {
-		//$packageID = '1602';
-		$packageID = ($data['state'] == 'CA') ? '1605' : '1602';
-	} else {
-		//$packageID = !empty($configs['packages']['tribal']) ? $configs['packages']['tribal'] : $configs['packages']['nontribal'];
-		$packageID = $credentials['packageId'];
+
+	$result = [];
+	$deviceType = ($data['phone_type'])?$data['phone_type']:"Android";
+	foreach ($packages as $item) {
+		if ($item['devicetype'] == $deviceType && $item['state'] === 'All') {
+			//$result[] = [
+				$packageID = $item['packageId'];
+				$providerId = $item['providerId'];
+			//];
+		}else if ($item['devicetype'] == $deviceType && $item['state'] == $data['state']){
+				$packageID = $item['packageId'];
+				$providerId = $item['providerId'];
+		}
 	}
+	// //print("<pre>" . print_r($configs, true) . "</pre>");
+	// if (!empty($data['phone_type']) && $data['phone_type'] == 'iOS') {
+	// 	//$packageID = '1602';
+	// 	$packageID = ($data['state'] == $packages['state']) ? '1605' : '1602';
+	// } else {
+	// 	//$packageID = !empty($configs['packages']['tribal']) ? $configs['packages']['tribal'] : $configs['packages']['nontribal'];
+	// 	$packageID = $credentials['packageId'];
+	// }
 	
 
 	/*
@@ -551,9 +565,9 @@ function lifeline_payload($data, $credentials)
 		$packageID = 'NO-Package';
 		
 	}*/
-    $carrier="TMO";
+    //$carrier="TMO";
 
-	$providerId = ($carrier === "TMO") ? 100001 : 100003;
+	//$providerId = ($carrier === "TMO") ? 100001 : 100003;
    
    
         $utm_values = $data['utm_source'] . '-' . $data['utm_medium'] . '-' . $data['utm_campaign'] . '-' . $data['utm_content'] . '-' . $data['match_type'] . '-' . $data['utm_adgroup'];
@@ -782,18 +796,18 @@ function getCredentialCLEC($company, $source){
 	return json_decode($response, true);
 }
 
-function getInvoiceShockwavecrm($credentials, $mdn, $orderId = '')
-{
-    $curl = new Curl();
-    $url = "https://wirelessapi.shockwavecrm.com/PrepaidWireless/QuerySubscriberInvoices";
-    $request = '{
-			"Credential": ' . $credentials . ',
-			"MDN": "' . $mdn . '",
-			"OrderId": ""
-		}';
-    $response = $curl->postJsonSimple($url, $request, "");
-    return json_decode($response, true);
-}
+// function getInvoiceShockwavecrm($credentials, $mdn, $orderId = '')
+// {
+//     $curl = new Curl();
+//     $url = "https://wirelessapi.shockwavecrm.com/PrepaidWireless/QuerySubscriberInvoices";
+//     $request = '{
+// 			"Credential": ' . $credentials . ',
+// 			"MDN": "' . $mdn . '",
+// 			"OrderId": ""
+// 		}';
+//     $response = $curl->postJsonSimple($url, $request, "");
+//     return json_decode($response, true);
+// }
 
 function getInvoiceShockwaveByMDN($mdn, $orderId = '')
 {

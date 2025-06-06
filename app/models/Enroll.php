@@ -60,4 +60,10 @@ class Enroll {
             return $result;
     }
 
+    public function getPackages(){
+        $this->db->query("SELECT * FROM packages WHERE active=1;");
+        $result = $this->db->resultSet();
+        return $result;
+    }
+
 }

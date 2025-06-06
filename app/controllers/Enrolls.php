@@ -1,6 +1,7 @@
 <?php
   class Enrolls extends Controller {
     public $enrollModel;
+    public $APIService;
     public function __construct(){
       $this->enrollModel = $this->model('Enroll');
     }
@@ -165,11 +166,17 @@
         //echo json_encode($initialData);
 
        // $customerData = $this->enrollModel->getCustomerData($data['customer_id']);
-        $result = $this->shockwaveProcess($data['customer_id']);
+        $this->APIService = new APIprocess();
+        $result = $this->APIService->shockwaveProcess($data['customer_id'],$this->enrollModel);
 
         echo json_encode($result);
 
       }
+    }
+
+    public function testprocess(){
+      $row = $this->enrollModel->getPackages();
+      print_r($row);
     }
 
     public function shockwaveProcess($customerId){
@@ -182,7 +189,7 @@
         $credentials=$this->enrollModel->getCredentials();
         $processData['customer_id']=$customerId;
     
-        $createResponse=create_shockwave_accountTEST2($customerData[0],$credentials[0]);
+        $createResponse=create_shockwave_account($customerData[0],$credentials[0],"");
         
         $processData['process_status']="addSubscriberOrder API";
         $this->enrollModel->updateData($processData,'lifeline_records');
@@ -208,8 +215,9 @@
                 "process_status"=>"saving Order ID > 0"
               ];
               $this->enrollModel->updateData($dataOrder,"lifeline_records");
-
-            $consentFile64=$this->getConsentFile($createResponse['order_id']);
+               $row = $this->enrollModel->getCustomerData($customerId);
+            $consentFile64=$this->getConsentFile($row[0]['order_id']);
+            //$consentFile64 = getConsent64($row[0]);
             // print_r($consentFile64);
               $processData['process_status']="generating consent File";
               $this->enrollModel->updateData($processData,'lifeline_records');
@@ -221,7 +229,7 @@
                 "filepath"=>$consentFile64['URL'],
                 "type_doc"=>"Consent"
               ];
-              $uploadConsent=UploadDocumentTest($credentials[0], $createResponse['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
+              $uploadConsent=UploadDocument($credentials[0], $createResponse['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
               //$uploadConsent['customer_id']=$customerId;
               $processData['process_status']="submitting Consent API";
               $this->enrollModel->updateData($processData,'lifeline_records');

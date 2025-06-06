@@ -3,6 +3,7 @@
     public $recordsModel;
     public $enrollsModel;
     public $userModel;
+	public $APIService;
     public function __construct(){
         if(!isLoggedIn()){
             redirect('users/login');
@@ -346,150 +347,8 @@
 	public function shockwaveProcess($customerId){
       //'G-SN3C0031'
       
-        $customerData = $this->enrollsModel->getCustomerData($customerId);
-       
-        if($customerData && $customerData[0]['customer_id']){
-         
-        $credentials=$this->enrollsModel->getCredentials();
-        $processData['customer_id']=$customerId;
-    
-        $createResponse=create_shockwave_accountTEST2($customerData[0],$credentials[0]);
-        
-        $processData['process_status']="addSubscriberOrder API";
-        $this->enrollsModel->updateData($processData,'lifeline_records');
-        
-        $saveCreateLog=[
-          "customer_id"=>$customerId,
-          "url"=>$createResponse['url'],
-          "request"=>$createResponse['request'],
-          "response"=>$createResponse['response'],
-          "title"=>$createResponse['title']
-        ];
-        
-        $this->enrollsModel->saveData($saveCreateLog,'lifeline_apis_log');
-        if($createResponse['status']=="success"){
-          
-          if($createResponse['order_id']>0){
-            $dataOrder=[
-                "customer_id"=>$customerId,
-                "order_id"=>$createResponse['order_id'],
-                "account"=>$createResponse['account'],
-                "acp_status"=>$createResponse['acp_status'],
-                "status_text"=>$createResponse['status_text'],
-                "process_status"=>"saving Order ID > 0"
-              ];
-              $this->enrollsModel->updateData($dataOrder,"lifeline_records");
-
-            $consentFile64=getConsentFile($createResponse['order_id']);
-
-              $processData['process_status']="generating consent File";
-              $this->enrollsModel->updateData($processData,'lifeline_records');
-            // exit();
-            if($consentFile64 && $consentFile64['status']=="success"){
-              //echo "base64 success";
-              $fileData = [
-                "customer_id"=>$customerData[0]['customer_id'],
-                "filepath"=>$consentFile64['URL'],
-                "type_doc"=>"Consent"
-              ];
-              $uploadConsent=UploadDocumentTest($credentials[0], $createResponse['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
-              //$uploadConsent['customer_id']=$customerId;
-              $processData['process_status']="submitting Consent API";
-              $this->enrollsModel->updateData($processData,'lifeline_records');
-              $saveCreateLog=[
-                "customer_id"=>$customerId,
-                "url"=>$uploadConsent['url'],
-                "request"=>$uploadConsent['request'],
-                "response"=>json_encode($uploadConsent['response']),
-                "title"=>$uploadConsent['title']
-              ];
-              $this->enrollsModel->saveData($saveCreateLog,'lifeline_apis_log');
-              if($uploadConsent['status']=="success"){
-                
-                $fileData['to_unavo']='1';
-                $result=[
-                  "status"=>"success",
-                  "msg"=>"Application and Consent file submitted",
-				  "order_id"=>$createResponse['order_id'],
-					"account"=>$createResponse['account'],
-					"acp_status"=>$createResponse['acp_status'],
-					"status_text"=>$createResponse['status_text'],
-                ];
-              }else{
-                  $result=[
-                  	"status"=>"success",
-                  	"msg"=>"Application submitted but Consent Fail",
-				  	"order_id"=>$createResponse['order_id'],
-                	"account"=>$createResponse['account'],
-               		"acp_status"=>$createResponse['acp_status'],
-                	"status_text"=>$createResponse['status_text']
-                ];
-              }
-              $fileData['statusScreen']=($this->enrollsModel->saveData($fileData,'lifeline_documents'))?true:false;
-              
-              
-              //echo "after orderId>0";
-              $dataOrder=[
-                "customer_id"=>$customerId,
-                "process_status"=>$result['msg']
-              ];
-              $this->enrollsModel->updateData($dataOrder,"lifeline_records");
-              //   $result = [
-              //   "status"=>"success",
-              //   "msg"=>"Shockwave process Success"
-              // ];
-            }else{
-              //echo "base64 error";
-              $result=[
-                "status"=>"error",
-                "msg"=>"We couldn't create a consent file",
-				"order_id"=>$createResponse['order_id'],
-                	"account"=>$createResponse['account'],
-               		"acp_status"=>$createResponse['acp_status'],
-                	"status_text"=>$createResponse['status_text']
-              ];
-               $processData['process_status']="Couldn't create a consent file";
-              $this->enrollsModel->updateData($processData,'lifeline_records');
-            }
-            
-            //print_r($result);
-          }else{
-              //echo "else orderId 0";
-            $dataOrder=[
-              "customer_id"=>$customerId,
-              "order_id"=>$createResponse['order_id'],
-              "account"=>$createResponse['account'],
-              "acp_status"=>$createResponse['acp_status'],
-              "status_text"=>$createResponse['status_text'],
-              "process_status"=>"Shockwave process success"
-            ];
-            $this->enrollsModel->updateData($dataOrder,"lifeline_records");
-              $result = [
-              "status"=>"success",
-              "msg"=>"Shockwave process Success",
-			  "order_id"=>$createResponse['order_id'],
-			  "acp_status"=>$createResponse['acp_status'],
-              "status_text"=>$createResponse['status_text'],
-            ];
-          }
-          //print_r($result);
-
-        }else{
-          
-          $result = [
-          "status"=>"error",
-          "msg"=>"Something went wrong submitting your application"
-        ];
-        $processData['process_status']="Something went wrong submitting your application";
-        $this->enrollsModel->updateData($processData,'lifeline_records');
-        }
-        //print_r($result);
-      }else{
-        $result = [
-          "status"=>"error",
-          "msg"=>"Invalid Customer ID"
-        ];
-      }
+    	$this->APIService = new APIprocess();
+        $result = $this->APIService->shockwaveProcess($customerId,$this->enrollsModel);
       //print_r($result);
       echo json_encode($result);
     }
