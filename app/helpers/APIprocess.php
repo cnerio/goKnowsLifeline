@@ -23,10 +23,9 @@ Class APIprocess{
           "customer_id"=>$customerId,
           "url"=>$createResponse['url'],
           "request"=>$createResponse['request'],
-          "response"=>$createResponse['response'],
+          "response"=>json_encode($createResponse['response']),
           "title"=>$createResponse['title']
         ];
-        
         $enrollModel->saveData($saveCreateLog,'lifeline_apis_log');
         if($createResponse['status']=="success"){
           

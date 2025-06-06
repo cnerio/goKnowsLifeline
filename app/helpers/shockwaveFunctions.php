@@ -766,6 +766,7 @@ function unavoAPICall($url, $request){
         else {
             $result = json_decode($response,true);
             $result['status']="success";
+			$result['msg']="";
         }
 
     return $result;
