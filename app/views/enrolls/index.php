@@ -92,7 +92,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="state">State <span class="requiredmark">*</span></label>
-                                        <select name="state" id="state" class="form-select">
+                                        <select name="state" id="state" class="form-select" onchange="stateChanged()">
                                             <option value="">Select a state</option>
                                             <option value="AL">Alabama</option>
                                             <option value="AK">Alaska</option>
@@ -132,6 +132,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                             <option value="OK">Oklahoma</option>
                                             <option value="OR">Oregon</option>
                                             <option value="PA">Pennsylvania</option>
+                                            <option value="PR">Puerto Rico</option>
                                             <option value="RI">Rhode Island</option>
                                             <option value="SC">South Carolina</option>
                                             <option value="SD">South Dakota</option>
@@ -145,7 +146,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                             <option value="WI">Wisconsin</option>
                                             <option value="WY">Wyoming</option>
                                             <option value="DC">District of Columbia</option>
-                                            <option value="PR">Puerto Rico</option>
+                                            
                                         </select>
 
                                     </div>
@@ -307,18 +308,65 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group">
-                                        <h6>Are you a Current Recipient of Lifeline Benefits?</h6>
-                                        <div class="form-check form-check-inline">
-                                            <input class=" form-check-input" value="Yes" type="radio" name="current_benefits" id="current_benefits1">
+                                    <div id="allStatesArea">
+                                        <div class="form-group">
+                                            <h6>Are you a Current Recipient of Lifeline Benefits?</h6>
+                                            <div class="form-check form-check-inline">
+                                                <input class=" form-check-input" value="Yes" type="radio" name="current_benefits" id="current_benefits1">
 
-                                            <label class="form-check-label" for="current_benefits1">Yes</label>
+                                                <label class="form-check-label" for="current_benefits1">Yes</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+
+                                                <input class=" form-check-input" value="No" type="radio" name="current_benefits" id="current_benefits2">
+
+                                                <label class="form-check-label" for="current_benefits2">No</label>
+                                            </div>
                                         </div>
-                                        <div class="form-check form-check-inline">
 
-                                            <input class=" form-check-input" value="No" type="radio" name="current_benefits" id="current_benefits2">
-
-                                            <label class="form-check-label" for="current_benefits2">No</label>
+                                    </div>
+                                    <div id="adultquestion" style="display:none">
+                                            <div class="form-group">
+                                            <h6>Do you live with another adult?</h6>
+                                            <div class="form-check form-check-inline">
+                                                <input class=" form-check-input" value="Yes" type="radio" name="anotheradult" id="anotheradult1" onchange="questionsArea(this,'otherbenefits','shareincome')">
+                                                <label class="form-check-label" for="anotheradult1">Yes</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class=" form-check-input" value="No" type="radio" name="anotheradult" id="anotheradult2" onchange="questionsArea(this,'otherbenefits','shareincome')">
+                                                <label class="form-check-label" for="anotheradult2">No</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="otherbenefits" style="display:none">
+                                            <div class="form-group">
+                                            <h6>Does the adult who lives with you receive a California Lifeline discount?</h6>
+                                            <div class="form-check form-check-inline">
+                                                <input class=" form-check-input" value="Yes" type="radio" name="otherbenefits" id="otherbenefits1" onchange="questionsArea(this,'shareincome')">
+                                                <label class="form-check-label" for="otherbenefits1">Yes</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class=" form-check-input" value="No" type="radio" name="otherbenefits" id="otherbenefits2" onchange="questionsArea(this,'shareincome')">
+                                                <label class="form-check-label" for="otherbenefits2">No</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="shareincome" style="display:none">
+                                            <div class="form-group">
+                                            <h6>Do you share income and living expenses with the adult who lives with you?</h6>
+                                            <div class="form-check form-check-inline">
+                                                <input class=" form-check-input" value="Yes" type="radio" name="shareincome" id="shareincome1" onchange="questionsArea(this,'NoQualifyForCalifornia')">
+                                                <label class="form-check-label" for="shareincome1">Yes</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class=" form-check-input" value="No" type="radio" name="shareincome" id="shareincome2" onchange="questionsArea(this,'NoQualifyForCalifornia')">
+                                                <label class="form-check-label" for="shareincome2">No</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="NoQualifyForCalifornia" style="display:none">
+                                        <div class="alert alert-warning" role="alert">
+                                            You do <b>not</b> qualify for California Lifeline because someone in your household already receives a Lifeline benefit. Only one Lifeline benefit per household is allowed under California Lifeline rules.<b><br> As a result, I understand that I will be removed from the California Lifeline Program.</b>
                                         </div>
                                     </div>
                                 </div>
@@ -352,7 +400,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             <div class="row">
                                 <div class="col-md-12">
                                     <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID</span>
-                                    <input type="file" id="fileInput" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
+                                    <input type="file" name="fileInput" id="fileInput" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
                                     <div id="preview"></div>
                                 </div>
                             </div>
@@ -507,6 +555,30 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             },
             signaturename:{
                 required:true
+            },
+            fileInput: {
+            required: {
+                depends: function(element) {
+                return $("#state").val() === "CA";
+                }
+            }
+            },
+            anotheradult:{
+                required: true
+                },
+            otherbenefits:{
+                required: {
+                    depends: function() {
+                    return $('input[name="anotheradult"]:checked').val() === 'Yes';
+                    }
+                }
+            },
+            shareincome:{
+                required: {
+                    depends: function() {
+                    return $('input[name="otherbenefits"]:checked').val() === 'Yes';
+                    }
+                }
             }
         },
         messages:{
@@ -532,7 +604,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         bodyTag: "section",
         transitionEffect: "slideLeft",
         onStepChanging: function(event, currentIndex, newIndex) {
-            form.validate().settings.ignore = ":disabled,:hidden";
+            //form.validate().settings.ignore = ":disabled,:hidden";
             console.log(currentIndex)
             let canProceed = false;
             if (form.valid() === true) {
@@ -590,7 +662,8 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                 let firstname = $("#firstname").val();
                                 let lastname = $("#lastname").val();
                                 let initials = firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
-                                getAgreementsItems('all',initials);
+                                let state = $("#state").val();
+                                getAgreementsItems(state,initials);
                                 getDatetime();
                             }else{
                                 canProceed = false;
@@ -846,7 +919,46 @@ function takeScreenshot() {
   });
 }
 
+function stateChanged(){
+    let state = $("#state").val();
+    if(state==="CA"){
+        $("#allStatesArea").hide();
+        $("#adultquestion").show();
+    }else{
+        $("#allStatesArea").show();
+        $("#adultquestion").hide();
+    }
+}
+
+function questionsArea(element,question1,extra=""){
+    let answer = element.value
+    
+    if(answer=="Yes"){
+        // $("#"+question1).hide();
+        $("#"+question1).show();
+        if(question1=="NoQualifyForCalifornia"){
+            $('#enrollForm :input').prop('disabled', true);
+            $("input[name=shareincome").prop('disabled',false)
+        }
+        
+    }else{
+        //$("#"+question1).show();
+        $("#"+question1).hide();
+        if(question1=="NoQualifyForCalifornia"){
+            $('#enrollForm :input').prop('disabled', false);
+            
+        }
+        $('input[name="'+question1+'"]').prop('checked', false);
+        if(extra){
+            $("#"+extra).hide();
+            $('input[name="'+extra+'"]').prop('checked', false);
+        }
+    }
+}
+
 $(document).ready(function () {
+    
+
      $.validator.addMethod("zipcodeMatch", function (value, element, params) {
     let zipcode = $("#zipcode").val();
     let city = $("#city").val().toLowerCase();

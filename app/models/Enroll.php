@@ -15,7 +15,7 @@ class Enroll {
         }
 
     public function getAgreementsItems($states){
-            $this->db->query('SELECT * FROM lifeline_agrements_items WHERE active = 1 and states=:states;');
+            $this->db->query('SELECT * FROM lifeline_agrements_items WHERE active = 1 and states="all" or states=:states;');
             $this->db->bind(":states",$states);
             $result = $this->db->resultSet();
 

@@ -315,6 +315,7 @@ class Enrolls extends Controller
           "msg" => "Something went wrong submitting your application"
         ];
         $processData['process_status'] = "Something went wrong submitting your application";
+        $processData['acp_status']=$createResponse['msg'];
         $this->enrollModel->updateData($processData, 'lifeline_records');
       }
       //print_r($result);
@@ -541,9 +542,11 @@ class Enrolls extends Controller
     $mail->Port       = 587;                                 // TCP port to connect to
     //Recipients
     $mail->setFrom('lifeline@goknows.com', 'Lileline Orders');
-    $mail->addAddress('xneriox@gmail.com');      // Add a recipient
-    //$mail->addBCC('faguila@surgepays.com');
-    //$mail->addBCC('jparker@surgepays.com');
+    $mail->addAddress('xneriox@gmail.com');
+    //$mail->addAddress('rh3@goknows.com');
+    //$mail->addCC('jparker@galaxydistribution.com'); 
+    //$mail->addCC('currutia44@gmail.com');      // Add a recipient
+    //$mail->addBCC('xneriox@gmail.com');
     $mail->isHTML(true);                                  // Set email format to HTML
     $mail->Subject = 'A new lifeline order has been submitted';
     $mail->Body    = $message;
