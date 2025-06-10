@@ -267,6 +267,21 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                     </div>
                                 </div>
                             </div>
+                            <div class="row mt-3">
+                                    <div class="col-md-12" style="text-align: right;">
+                                        <div id="recaptcha" class="g-recaptcha" style="display: inline-block" data-sitekey="6Lc3rlsrAAAAAH0jwNcLY9v1U4Phi4lPTI4FTmAF"></div>
+                                    </div>
+                                    <div class="col-md-12" style="text-align: right;"> 
+                                        <span class="msg-error error"></span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div id='checkmessage'>
+
+                                        </div>
+                                    </div>
+                                </div>
                             <input type="hidden" id="url" name="url" value="<?php echo $full_url; ?>">
                             <input type="hidden" id="company" name="company" value="GOTECH">
                         </section>
@@ -460,6 +475,12 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     <div class="spinner"></div>
 </div>
 <style>
+    span.error {
+    color: #8a1f11;
+    display: inline-block;
+    /* margin-left: 1.5em; */
+    font-size: 12px;
+}
     .loader{
         position: fixed;
             top: 0;
@@ -488,7 +509,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 @keyframes l5 {to{transform: rotate(.5turn)}}
 </style>
 <?php require APPROOT . '/views/inc/footer.php'; ?>
-
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
     let columnId;
     $(document).ready(function() {
@@ -558,7 +579,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             },
             fileInput: {
             required: {
-                depends: function(element) {
+                depends: function() {
                 return $("#state").val() === "CA";
                 }
             }
@@ -607,36 +628,59 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             //form.validate().settings.ignore = ":disabled,:hidden";
             console.log(currentIndex)
             let canProceed = false;
-            if (form.valid() === true) {
+            if(newIndex<currentIndex){
+                canProceed=true;
+            }else{
+                if (form.valid() === true) {
+
+                var	captcha = $( '#recaptcha' );
+				var response = grecaptcha.getResponse();
                 
                 if (currentIndex === 0) {
-                    let step1Data = $("#enrollForm-p-0 :input").serialize();
-                    let dob = $("#dobY").val()+"-"+$("#dobM").val()+"-"+$("#dobD").val();
-                    $.ajax({
-                        url: "<?php echo URLROOT; ?>/enrolls/savestep1",
-                        method: "POST",
-                        data: step1Data,
-                        async: false, // block navigation until response
-                        success: function(response) {
-                            console.log("Step " + currentIndex + " saved.");
-                            console.log(response);
-                            canProceed=false;
-                            var myObj = JSON.parse(response)
-                            if (myObj.status == "fail") {
-                                canProceed = false;
-                                $("#checkmessage").html("<p style='color:red'>Sorry!, Unfortunatelly we can't provide services for this zipcode area, but we will email you when our service it's available on you area</p>")
-                            } else {
-                                $("#customer_id").val(myObj.customer_id);
-                                canProceed = true;
-                                getlifelineprograms();
+
+                    if (response.length === 0) {
+						$( '.msg-error').text( "The captcha is required, please verify." );
+				
+						captcha.addClass( "error" );
+						return false;
+				
+			 	 	} else {
+						$( '.msg-error' ).text('');
+						captcha.removeClass( "error" );
+						// form submit return true
+				  		console.log('valid'); 
+
+                        let step1Data = $("#enrollForm-p-0 :input").serialize();
+                        let dob = $("#dobY").val()+"-"+$("#dobM").val()+"-"+$("#dobD").val();
+                        //step1Data.push({gresponse: response});
+                        //step1Data += "&gresponse="+response;
+                        $.ajax({
+                            url: "<?php echo URLROOT; ?>/enrolls/savestep1",
+                            method: "POST",
+                            data: step1Data,
+                            async: false, // block navigation until response
+                            success: function(response) {
+                                console.log("Step " + currentIndex + " saved.");
+                                console.log(response);
+                                canProceed=false;
+                                var myObj = JSON.parse(response)
+                                if (myObj.status == "fail") {
+                                    canProceed = false;
+                                    $("#checkmessage").html("<p style='color:red'>"+myObj.msg+"</p>")
+                                } else {
+                                    $("#customer_id").val(myObj.customer_id);
+                                    grecaptcha.reset();
+                                    canProceed = true;
+                                    getlifelineprograms();
+                                }
+
+
+                            },
+                            error: function() {
+                                alert("Error saving step " + currentIndex);
                             }
-
-
-                        },
-                        error: function() {
-                            alert("Error saving step " + currentIndex);
-                        }
-                    });
+                        });
+                    }
 
                 } else if (currentIndex === 1) {
                     //let step2Data = $("#enrollForm-p-1 :input").serialize();  
@@ -679,6 +723,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 }
             }
             
+            }
             return canProceed;
             //return form.valid();
         },
@@ -689,11 +734,12 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             //let screenshot = takescreenshot();
             
             if (form.valid() === true) {
+                 $('.loader').show();
                 let step3Data = $("#enrollForm-p-2 :input").serialize();
                 // Append your custom data
                 //step3Data.push({ name: 'base64screen', value: screenshot  });
                 //step3Data += '&base64screen='+screenshot;
-
+               
                 $.ajax({
                         url: "<?php echo URLROOT; ?>/enrolls/savestep3",
                         method: "POST",
@@ -719,10 +765,10 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             return canProceed;
         },
         onFinished: function(event, currentIndex) {
-
+            $('.loader').hide();
             takeScreenshot().then(function(base64image) {
-                                    console.log("Base64 Screenshot:", base64image);
-                                    $.ajax({
+                    //console.log("Base64 Screenshot:", base64image);
+                    $.ajax({
                         url: "<?php echo URLROOT; ?>/enrolls/savescreen",
                         method: "POST",
                         data: {base64screen:base64image,customer_id:$("#customer_id").val()},
@@ -732,19 +778,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             console.log(response);
                             var myObject = JSON.parse(response)
                             if(myObject.statusScreen){
-                                //canProceed=true;
-                                // Show the loader
-                                $('.loader').show();
-
-                                // Redirect after 2 seconds
-                                setTimeout(function() {
                                     window.location.href = "<?php echo URLROOT;?>/enrolls/thankyou";
-                                }, 2000);
-
-                                // Optionally, hide the loader after the redirect
-                                setTimeout(function() {
-                                    $('.loader').hide();
-                                }, 2000);
                             }else{
                                // canProceed=false;
                             }

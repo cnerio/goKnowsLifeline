@@ -69,39 +69,65 @@ class Enrolls extends Controller
   public function savestep1()
   {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      $phonenumber = preg_replace('/[^0-9]/', '', $_POST['phone']);
-      $dob = date('Y-m-d', strtotime($_POST['dobY'] . "-" . $_POST['dobD'] . "-" . $_POST['dobM']));
-      $data = [
-        "first_name" => trim(ucfirst(strtolower($_POST['firstname']))),
-        "second_name" => trim(ucfirst(strtolower($_POST['lastname']))),
-        "ssn" => trim($_POST['ssn']),
-        "dob" => $dob,
-        "email" => trim(strtolower($_POST['email'])),
-        "phone_number" => $phonenumber,
-        "address1" => trim($_POST['address1']),
-        "address2" => trim($_POST['addess2']),
-        "city" => trim(ucfirst(strtolower($_POST['city']))),
-        "state" => $_POST['state'],
-        "zipcode" => $_POST['zipcode'],
-        "shipping_address1" => (isset($_POST['shipaddress1']) ? $_POST['shipaddress1'] : null),
-        "shipping_address2" => (isset($_POST['shipaddess2'])) ? $_POST['shipaddess2'] : null,
-        "shipping_city" => (isset($_POST['shipcity'])) ? $_POST['shipcity'] : null,
-        "shipping_state" => (isset($_POST['shipstate'])) ? $_POST['shipstate'] : null,
-        "shipping_zipcode" => (isset($_POST['shipzipcode'])) ? $_POST['shipzipcode'] : null,
-        "order_step" => "Step 1",
-        "URL" => $_POST['url'],
-        "company" => $_POST['company']
-      ];
-      $lastId = $this->enrollModel->saveData($data, 'lifeline_records');
 
-      if ($lastId > 0) {
-        //$data['lastId']=$lastId;
-        $customerId = $this->genCustomerId($data, $lastId);
-        $this->enrollModel->updateCusId($lastId, $customerId, 'lifeline_records');
-        $data['customer_id'] = $customerId;
-        $data['status'] = "success";
-      } else {
+      $post_data = http_build_query(
+          array(
+              'secret' => "6Lc3rlsrAAAAAPisCZMU480WzdRQCua2JsT-E5GD",
+              'response' => $_POST['g-recaptcha-response'],
+              'remoteip' => $_SERVER['REMOTE_ADDR']
+          )
+      );
+      $opts = array('http' =>
+          array(
+              'method'  => 'POST',
+              'header'  => 'Content-type: application/x-www-form-urlencoded',
+              'content' => $post_data
+          )
+      );
+
+
+      $context  = stream_context_create($opts);
+      $response = file_get_contents('https://www.google.com/recaptcha/api/siteverify', false, $context);
+      $result = json_decode($response);
+      //print_r($result);
+      if (!$result->success) {
         $data['status'] = "fail";
+        $data['msg']= 'CAPTCHA verification failed';
+      }else{
+        $phonenumber = preg_replace('/[^0-9]/', '', $_POST['phone']);
+        $dob = date('Y-m-d', strtotime($_POST['dobY'] . "-" . $_POST['dobD'] . "-" . $_POST['dobM']));
+        $data = [
+          "first_name" => trim(ucfirst(strtolower($_POST['firstname']))),
+          "second_name" => trim(ucfirst(strtolower($_POST['lastname']))),
+          "ssn" => trim($_POST['ssn']),
+          "dob" => $dob,
+          "email" => trim(strtolower($_POST['email'])),
+          "phone_number" => $phonenumber,
+          "address1" => trim($_POST['address1']),
+          "address2" => trim($_POST['addess2']),
+          "city" => trim(ucfirst(strtolower($_POST['city']))),
+          "state" => $_POST['state'],
+          "zipcode" => $_POST['zipcode'],
+          "shipping_address1" => (isset($_POST['shipaddress1']) ? $_POST['shipaddress1'] : null),
+          "shipping_address2" => (isset($_POST['shipaddess2'])) ? $_POST['shipaddess2'] : null,
+          "shipping_city" => (isset($_POST['shipcity'])) ? $_POST['shipcity'] : null,
+          "shipping_state" => (isset($_POST['shipstate'])) ? $_POST['shipstate'] : null,
+          "shipping_zipcode" => (isset($_POST['shipzipcode'])) ? $_POST['shipzipcode'] : null,
+          "order_step" => "Step 1",
+          "URL" => $_POST['url'],
+          "company" => $_POST['company']
+        ];
+        $lastId = $this->enrollModel->saveData($data, 'lifeline_records');
+
+        if ($lastId > 0) {
+          //$data['lastId']=$lastId;
+          $customerId = $this->genCustomerId($data, $lastId);
+          $this->enrollModel->updateCusId($lastId, $customerId, 'lifeline_records');
+          $data['customer_id'] = $customerId;
+          $data['status'] = "success";
+        } else {
+          $data['status'] = "fail";
+        }
       }
       //print_r($data);
       echo json_encode($data);
