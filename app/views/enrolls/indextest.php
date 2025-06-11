@@ -578,11 +578,11 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 required:true
             },
             fileInput: {
-            required: {
-                depends: function() {
-                return $("#state").val() === "CA";
+                required: {
+                    depends: function() {
+                    return $("#state").val() == "CA";
+                    }
                 }
-            }
             },
             anotheradult:{
                 required: true
@@ -628,7 +628,10 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             //form.validate().settings.ignore = ":disabled,:hidden";
             console.log(currentIndex)
             let canProceed = false;
-            if (form.valid() === true) {
+            if(newIndex<currentIndex){
+                canProceed=true;
+            }else{
+                if (form.valid() === true) {
 
                 var	captcha = $( '#recaptcha' );
 				var response = grecaptcha.getResponse();
@@ -656,7 +659,11 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             method: "POST",
                             data: step1Data,
                             async: false, // block navigation until response
+                            beforeSend:function(){
+                                $("#load").show();
+                            },
                             success: function(response) {
+                                $("#load").hide();
                                 console.log("Step " + currentIndex + " saved.");
                                 console.log(response);
                                 canProceed=false;
@@ -666,6 +673,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                     $("#checkmessage").html("<p style='color:red'>"+myObj.msg+"</p>")
                                 } else {
                                     $("#customer_id").val(myObj.customer_id);
+                                    grecaptcha.reset();
                                     canProceed = true;
                                     getlifelineprograms();
                                 }
@@ -719,6 +727,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 }
             }
             
+            }
             return canProceed;
             //return form.valid();
         },
@@ -729,11 +738,12 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             //let screenshot = takescreenshot();
             
             if (form.valid() === true) {
+                 $('.loader').show();
                 let step3Data = $("#enrollForm-p-2 :input").serialize();
                 // Append your custom data
                 //step3Data.push({ name: 'base64screen', value: screenshot  });
                 //step3Data += '&base64screen='+screenshot;
-
+               
                 $.ajax({
                         url: "<?php echo URLROOT; ?>/enrolls/savestep3",
                         method: "POST",
@@ -759,10 +769,10 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             return canProceed;
         },
         onFinished: function(event, currentIndex) {
-
+            $('.loader').hide();
             takeScreenshot().then(function(base64image) {
-                                    console.log("Base64 Screenshot:", base64image);
-                                    $.ajax({
+                    //console.log("Base64 Screenshot:", base64image);
+                    $.ajax({
                         url: "<?php echo URLROOT; ?>/enrolls/savescreen",
                         method: "POST",
                         data: {base64screen:base64image,customer_id:$("#customer_id").val()},
@@ -772,19 +782,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             console.log(response);
                             var myObject = JSON.parse(response)
                             if(myObject.statusScreen){
-                                //canProceed=true;
-                                // Show the loader
-                                $('.loader').show();
-
-                                // Redirect after 2 seconds
-                                setTimeout(function() {
                                     window.location.href = "<?php echo URLROOT;?>/enrolls/thankyou";
-                                }, 2000);
-
-                                // Optionally, hide the loader after the redirect
-                                setTimeout(function() {
-                                    $('.loader').hide();
-                                }, 2000);
                             }else{
                                // canProceed=false;
                             }

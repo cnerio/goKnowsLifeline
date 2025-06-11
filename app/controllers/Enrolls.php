@@ -96,6 +96,11 @@ class Enrolls extends Controller
       }else{
         $phonenumber = preg_replace('/[^0-9]/', '', $_POST['phone']);
         $dob = date('Y-m-d', strtotime($_POST['dobY'] . "-" . $_POST['dobD'] . "-" . $_POST['dobM']));
+        if(isset($_POST['customer_id'])){
+          $customer_id = $_POST['customer_id'];
+        }else{
+          $customer_id =null;
+        };
         $data = [
           "first_name" => trim(ucfirst(strtolower($_POST['firstname']))),
           "second_name" => trim(ucfirst(strtolower($_POST['lastname']))),
@@ -117,17 +122,28 @@ class Enrolls extends Controller
           "URL" => $_POST['url'],
           "company" => $_POST['company']
         ];
-        $lastId = $this->enrollModel->saveData($data, 'lifeline_records');
-
-        if ($lastId > 0) {
-          //$data['lastId']=$lastId;
-          $customerId = $this->genCustomerId($data, $lastId);
-          $this->enrollModel->updateCusId($lastId, $customerId, 'lifeline_records');
-          $data['customer_id'] = $customerId;
-          $data['status'] = "success";
-        } else {
-          $data['status'] = "fail";
+        if($customer_id){
+          $data['customer_id']=$customer_id;
+          
+          $this->enrollModel->updateData($data, 'lifeline_records');
+            //$data['customer_id'] = $customerId;
+            $data['status'] = "success";
+            $data['action']="update";
+        }else{
+          $lastId = $this->enrollModel->saveData($data, 'lifeline_records');
+          
+          if ($lastId > 0) {
+            //$data['lastId']=$lastId;
+            $customerId = $this->genCustomerId($data, $lastId);
+            $this->enrollModel->updateCusId($lastId, $customerId, 'lifeline_records');
+            $data['customer_id'] = $customerId;
+            $data['action']="insert";
+            $data['status'] = "success";
+          } else {
+            $data['status'] = "fail";
+          }
         }
+        
       }
       //print_r($data);
       echo json_encode($data);

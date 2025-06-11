@@ -286,7 +286,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             <input type="hidden" id="company" name="company" value="GOTECH">
                         </section>
 
-                        <h3>Elegibility</h3>
+                        <h3>Eligibility</h3>
 
                         <section>
                             <div class="row">
@@ -391,6 +391,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                     <div class="form-group">
                                         <label for="nv_application_id">National Verifier Application ID</label>
                                         <input type="text" id="nv_application_id" name="nv_application_id" class="form-control">
+                                        <span><b>Not Required</b></span>
                                     </div>
                                 </div>
                             </div>
@@ -415,6 +416,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             <div class="row">
                                 <div class="col-md-12">
                                     <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID</span>
+                                    <br><span><b>Not Required</b></span>
                                     <input type="file" name="fileInput" id="fileInput" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
                                     <div id="preview"></div>
                                 </div>
@@ -578,11 +580,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                 required:true
             },
             fileInput: {
-            required: {
-                depends: function() {
-                return $("#state").val() === "CA";
-                }
-            }
+                required: true
             },
             anotheradult:{
                 required: true
@@ -626,6 +624,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         transitionEffect: "slideLeft",
         onStepChanging: function(event, currentIndex, newIndex) {
             //form.validate().settings.ignore = ":disabled,:hidden";
+            form.validate().settings.ignore=":hidden";
             console.log(currentIndex)
             let canProceed = false;
             if(newIndex<currentIndex){
@@ -637,6 +636,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 				var response = grecaptcha.getResponse();
                 
                 if (currentIndex === 0) {
+                    let customer_id="";
 
                     if (response.length === 0) {
 						$( '.msg-error').text( "The captcha is required, please verify." );
@@ -649,17 +649,21 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 						captcha.removeClass( "error" );
 						// form submit return true
 				  		console.log('valid'); 
-
+                        customer_id=$("#customer_id").val();
                         let step1Data = $("#enrollForm-p-0 :input").serialize();
                         let dob = $("#dobY").val()+"-"+$("#dobM").val()+"-"+$("#dobD").val();
                         //step1Data.push({gresponse: response});
-                        //step1Data += "&gresponse="+response;
+                        if(customer_id.length>0){
+                            step1Data += "&customer_id="+customer_id;
+                        }
+                        //step1Data += "&g-recaptcha-response="+response;
                         $.ajax({
                             url: "<?php echo URLROOT; ?>/enrolls/savestep1",
                             method: "POST",
                             data: step1Data,
                             async: false, // block navigation until response
                             success: function(response) {
+                                $("#load").hide();
                                 console.log("Step " + currentIndex + " saved.");
                                 console.log(response);
                                 canProceed=false;
@@ -668,10 +672,12 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                     canProceed = false;
                                     $("#checkmessage").html("<p style='color:red'>"+myObj.msg+"</p>")
                                 } else {
-                                    $("#customer_id").val(myObj.customer_id);
+                                    customer_id=myObj.customer_id
+                                    $("#customer_id").val(customer_id);
                                     grecaptcha.reset();
                                     canProceed = true;
                                     getlifelineprograms();
+                                    //$("#enrollForm").steps("next");
                                 }
 
 
@@ -749,9 +755,9 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             console.log("Step " + currentIndex + " saved.");
                             console.log(response);
                             var myObject = JSON.parse(response)
-                            if(myObject.status){
+                            if(myObject.status=="success"){
                                 canProceed=true;
-                                
+                                //$("#enrollForm").steps("next")
                             }else{
                                 canProceed=false;
                             }
