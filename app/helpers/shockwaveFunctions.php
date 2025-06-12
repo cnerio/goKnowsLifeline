@@ -276,7 +276,7 @@ function create_shockwave_account($data,$credentials,$packages){
     
 	if($response['status']=="success"){
         $subscriberOrder = $response;
-            if ($subscriberOrder['SubscriberOrderID'] == 0) {
+            if ($subscriberOrder['SubscriberOrderID'] === 0) {
             $acp_status = $subscriberOrder["StatusText"];
         } else {
             $acp_status = $subscriberOrder['NLADStatus'];

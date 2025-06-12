@@ -627,6 +627,8 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             form.validate().settings.ignore=":hidden";
             console.log(currentIndex)
             let canProceed = false;
+            let customer_id="";
+            let benefitProgram;
             if(newIndex<currentIndex){
                 canProceed=true;
             }else{
@@ -636,8 +638,8 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 				var response = grecaptcha.getResponse();
                 
                 if (currentIndex === 0) {
-                    let customer_id="";
-
+                    
+                    //console.log(benefitProgram)
                     if (response.length === 0) {
 						$( '.msg-error').text( "The captcha is required, please verify." );
 				
@@ -648,7 +650,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 						$( '.msg-error' ).text('');
 						captcha.removeClass( "error" );
 						// form submit return true
-				  		console.log('valid'); 
+				  		//console.log('valid'); 
                         customer_id=$("#customer_id").val();
                         let step1Data = $("#enrollForm-p-0 :input").serialize();
                         let dob = $("#dobY").val()+"-"+$("#dobM").val()+"-"+$("#dobD").val();
@@ -690,7 +692,8 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
                 } else if (currentIndex === 1) {
                     //let step2Data = $("#enrollForm-p-1 :input").serialize();  
-                    
+                    //benefitProgram = (benefitProgram=="")?$("#eligibility_program").val():benefitProgram;
+                    //console.log(benefitProgram)
                     $.ajax({
                         url: "<?php echo URLROOT; ?>/enrolls/savestep2",
                         method: "POST",
@@ -735,12 +738,12 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         },
         onFinishing: function(event, currentIndex) {
             form.validate().settings.ignore = ":disabled,:hidden";
-            console.log(currentIndex)
+            //console.log(currentIndex)
             let canProceed = false;
             //let screenshot = takescreenshot();
             
             if (form.valid() === true) {
-                 $('.loader').show();
+                 
                 let step3Data = $("#enrollForm-p-2 :input").serialize();
                 // Append your custom data
                 //step3Data.push({ name: 'base64screen', value: screenshot  });
@@ -750,7 +753,10 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                         url: "<?php echo URLROOT; ?>/enrolls/savestep3",
                         method: "POST",
                         data: step3Data,
-                        async: false, // block navigation until response
+                        //async: false, // block navigation until response
+                        beforeSend:function(){
+                            $('.loader').show();
+                        },
                         success: function(response) {
                             console.log("Step " + currentIndex + " saved.");
                             console.log(response);
@@ -767,23 +773,27 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                             alert("Error saving step " + currentIndex);
                         }
                     });
+                    canProceed=true;
             }
+            
             return canProceed;
         },
         onFinished: function(event, currentIndex) {
-            $('.loader').hide();
+            
             takeScreenshot().then(function(base64image) {
                     //console.log("Base64 Screenshot:", base64image);
                     $.ajax({
                         url: "<?php echo URLROOT; ?>/enrolls/savescreen",
                         method: "POST",
                         data: {base64screen:base64image,customer_id:$("#customer_id").val()},
-                        async: false, // block navigation until response
+                        //async: false, // block navigation until response
                         success: function(response) {
+                            $('.loader').hide();
                             console.log("Step " + currentIndex + " saved.");
                             console.log(response);
                             var myObject = JSON.parse(response)
                             if(myObject.statusScreen){
+
                                     window.location.href = "<?php echo URLROOT;?>/enrolls/thankyou";
                             }else{
                                // canProceed=false;
@@ -817,7 +827,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             success: function(response) {
                 
                 let options = JSON.parse(response)
-                console.log(options)
+                //console.log(options)
                 var sel = $('#eligibility_program'); // Reference to the select element
                 sel.empty();
                 $('<option>').val('').text('Select..').appendTo(sel);
@@ -849,11 +859,11 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             success: function(response) {
                     
                     let items = JSON.parse(response);
-                    console.log(items)
+                    //console.log(items)
                     var agree = $('#agreeItems');
                     agree.empty();
                     $.each(items,function(key,val){
-                        console.log(val)
+                        //console.log(val)
                         agree.append(template({inputname:val.inputname,description:val.description}));
                         $("#"+val.inputname).val(initials)
                         let newInput = $("#"+val.inputname)
@@ -1017,7 +1027,7 @@ $(document).ready(function () {
         let apiCity = place["place name"].toLowerCase();
         let apiState = place["state abbreviation"];
         //console.log(state+apiState)
-        if (city == apiCity && state == apiState) {
+        if (city == apiCity || state == apiState) {
           valid = true;
         }
       },
