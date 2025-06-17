@@ -743,6 +743,10 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
             //let screenshot = takescreenshot();
             
             if (form.valid() === true) {
+                var $finishButton = $("a[href='#finish']"); // Select the default "Finish" button
+        
+                // Disable the button to prevent multiple clicks
+                $finishButton.prop('disabled', true);
                  
                 let step3Data = $("#enrollForm-p-2 :input").serialize();
                 // Append your custom data
@@ -766,6 +770,7 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                 //$("#enrollForm").steps("next")
                             }else{
                                 canProceed=false;
+                                $finishButton.prop('disabled', false);
                             }
 
                         },

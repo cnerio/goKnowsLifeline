@@ -186,43 +186,61 @@ class Enrolls extends Controller
 
   public function savestep3()
   {
-    if ($_SERVER['REQUEST_METHOD'] == "POST") {
-      //print_r($_POST);
-      $data = [
-        "signature_text" => trim($_POST['signaturename']),
-        "datetimeConsent" => $_POST['datetimeconsent'],
-        "agree_terms" => $_POST['terms'],
-        "agree_sms" => $_POST['sms'],
-        "agree_pii" => $_POST['know'],
-        "customer_id" => $_POST['customer_id'],
-        "order_step" => "Step 3"
-      ];
+    session_start();
 
-      $this->enrollModel->updateData($data, 'lifeline_records');
-      $initialData = [
-        "initials1" => trim(strtoupper($_POST['initials_1'])),
-        "initials2" => trim(strtoupper($_POST['initials_2'])),
-        "initials3" => trim(strtoupper($_POST['initials_3'])),
-        "initials4" => trim(strtoupper($_POST['initials_4'])),
-        "initials5" => trim(strtoupper($_POST['initials_5'])),
-        "initials6" => trim(strtoupper($_POST['initials_6'])),
-        "initials7" => trim(strtoupper($_POST['initials_7'])),
-        "initials8" => trim(strtoupper($_POST['initials_8'])),
-        "initials9" => trim(strtoupper($_POST['initials_9'])),
-        "customer_id" => $data['customer_id']
-      ];
+    // Prevent multiple submissions within a short time
+    if (isset($_SESSION['form_submitted']) && $_SESSION['form_submitted'] === true) {
+        echo json_encode(['error' => 'Form already submitted.']);
+        exit;
+    }
 
-      $initialData['statusfinale'] = ($this->enrollModel->saveData($initialData, 'lifeline_agreement')) ? true : false;
-      //echo json_encode($initialData);
+    // Mark the form as submitted
+    $_SESSION['form_submitted'] = true;
 
-      // $customerData = $this->enrollModel->getCustomerData($data['customer_id']);
-      $this->APIService = new APIprocess();
-      $result = $this->APIService->shockwaveProcess($data['customer_id'], $this->enrollModel);
+    try {
+      if ($_SERVER['REQUEST_METHOD'] == "POST") {
+        //print_r($_POST);
+        $data = [
+          "signature_text" => trim($_POST['signaturename']),
+          "datetimeConsent" => $_POST['datetimeconsent'],
+          "agree_terms" => $_POST['terms'],
+          "agree_sms" => $_POST['sms'],
+          "agree_pii" => $_POST['know'],
+          "customer_id" => $_POST['customer_id'],
+          "order_step" => "Step 3"
+        ];
 
-      $row2 = $this->enrollModel->getCustomerData($data['customer_id']);
-      $this->sendNotification($row2[0]);
+        $this->enrollModel->updateData($data, 'lifeline_records');
+        $initialData = [
+          "initials1" => trim(strtoupper($_POST['initials_1'])),
+          "initials2" => trim(strtoupper($_POST['initials_2'])),
+          "initials3" => trim(strtoupper($_POST['initials_3'])),
+          "initials4" => trim(strtoupper($_POST['initials_4'])),
+          "initials5" => trim(strtoupper($_POST['initials_5'])),
+          "initials6" => trim(strtoupper($_POST['initials_6'])),
+          "initials7" => trim(strtoupper($_POST['initials_7'])),
+          "initials8" => trim(strtoupper($_POST['initials_8'])),
+          "initials9" => trim(strtoupper($_POST['initials_9'])),
+          "customer_id" => $data['customer_id']
+        ];
 
-      echo json_encode($result);
+        $initialData['statusfinale'] = ($this->enrollModel->saveData($initialData, 'lifeline_agreement')) ? true : false;
+        //echo json_encode($initialData);
+
+        // $customerData = $this->enrollModel->getCustomerData($data['customer_id']);
+        $this->APIService = new APIprocess();
+        $result = $this->APIService->shockwaveProcess($data['customer_id'], $this->enrollModel);
+
+        $row2 = $this->enrollModel->getCustomerData($data['customer_id']);
+        $this->sendNotification($row2[0]);
+
+        echo json_encode($result);
+      }
+    } catch (Exception $e) {
+    echo json_encode(['status' => 'error','msg' => 'An error occurred: ' . $e->getMessage()]);
+    } finally {
+        // Reset the form submitted flag after a short period or once the request is done
+        $_SESSION['form_submitted'] = false;
     }
   }
 
@@ -232,146 +250,7 @@ class Enrolls extends Controller
     $this->sendNotification($row2[0]);
   }
 
-  public function shockwaveProcess($customerId)
-  {
-    //'G-SN3C0031'
-
-    $customerData = $this->enrollModel->getCustomerData($customerId);
-
-    if ($customerData && $customerData[0]['customer_id']) {
-
-      $credentials = $this->enrollModel->getCredentials();
-      $processData['customer_id'] = $customerId;
-
-      $createResponse = create_shockwave_account($customerData[0], $credentials[0], "");
-
-      $processData['process_status'] = "addSubscriberOrder API";
-      $this->enrollModel->updateData($processData, 'lifeline_records');
-
-      $saveCreateLog = [
-        "customer_id" => $customerId,
-        "url" => $createResponse['url'],
-        "request" => $createResponse['request'],
-        "response" => $createResponse['response'],
-        "title" => $createResponse['title']
-      ];
-
-      $this->enrollModel->saveData($saveCreateLog, 'lifeline_apis_log');
-      if ($createResponse['status'] == "success") {
-
-        if ($createResponse['order_id'] > 0) {
-          $dataOrder = [
-            "customer_id" => $customerId,
-            "order_id" => $createResponse['order_id'],
-            "account" => $createResponse['account'],
-            "acp_status" => $createResponse['acp_status'],
-            "status_text" => $createResponse['status_text'],
-            "process_status" => "saving Order ID > 0"
-          ];
-          $this->enrollModel->updateData($dataOrder, "lifeline_records");
-          $row = $this->enrollModel->getCustomerData($customerId);
-          $consentFile64 = $this->getConsentFile($row[0]['order_id']);
-          //$consentFile64 = getConsent64($row[0]);
-          // print_r($consentFile64);
-          $processData['process_status'] = "generating consent File";
-          $this->enrollModel->updateData($processData, 'lifeline_records');
-          // exit();
-          if ($consentFile64['status'] == "success") {
-            //echo "base64 success";
-            $fileData = [
-              "customer_id" => $customerData[0]['customer_id'],
-              "filepath" => $consentFile64['URL'],
-              "type_doc" => "Consent"
-            ];
-            $uploadConsent = UploadDocument($credentials[0], $createResponse['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
-            //$uploadConsent['customer_id']=$customerId;
-            $processData['process_status'] = "submitting Consent API";
-            $this->enrollModel->updateData($processData, 'lifeline_records');
-            $saveCreateLog = [
-              "customer_id" => $customerId,
-              "url" => $uploadConsent['url'],
-              "request" => $uploadConsent['request'],
-              "response" => json_encode($uploadConsent['response']),
-              "title" => $uploadConsent['title']
-            ];
-            $this->enrollModel->saveData($saveCreateLog, 'lifeline_apis_log');
-            if ($uploadConsent['status'] == "success") {
-
-              $fileData['to_unavo'] = '1';
-              $result = [
-                "status" => "success",
-                "msg" => "Consent file submitted"
-              ];
-            } else {
-              $result = [
-                "status" => "success",
-                "msg" => "Something went wrong uploading your file"
-              ];
-            }
-            $fileData['statusScreen'] = ($this->enrollModel->saveData($fileData, 'lifeline_documents')) ? true : false;
-
-
-            //echo "after orderId>0";
-            $dataOrder = [
-              "customer_id" => $customerId,
-              "process_status" => $result['msg']
-            ];
-            $this->enrollModel->updateData($dataOrder, "lifeline_records");
-            //   $result = [
-            //   "status"=>"success",
-            //   "msg"=>"Shockwave process Success"
-            // ];
-          } else {
-            //echo "base64 error";
-            $result = [
-              "status" => "success",
-              "msg" => "We couldn't create a consent file"
-            ];
-            $processData['process_status'] = "Couldn't create a consent file";
-            $this->enrollModel->updateData($processData, 'lifeline_records');
-          }
-
-          //print_r($result);
-        } else {
-          //echo "else orderId 0";
-          $dataOrder = [
-            "customer_id" => $customerId,
-            "order_id" => $createResponse['order_id'],
-            "account" => $createResponse['account'],
-            "acp_status" => $createResponse['acp_status'],
-            "status_text" => $createResponse['status_text'],
-            "process_status" => "Shockwave process success"
-          ];
-          $this->enrollModel->updateData($dataOrder, "lifeline_records");
-          $result = [
-            "status" => "success",
-            "msg" => "Shockwave process Success"
-          ];
-        }
-        //print_r($result);
-
-      } else {
-
-        $result = [
-          "status" => "success",
-          "msg" => "Something went wrong submitting your application"
-        ];
-        $processData['process_status'] = "Something went wrong submitting your application";
-        $processData['acp_status']=$createResponse['msg'];
-        $this->enrollModel->updateData($processData, 'lifeline_records');
-      }
-      //print_r($result);
-    } else {
-      $result = [
-        "status" => "error",
-        "msg" => "Invalid Customer ID"
-      ];
-    }
-    $row2 = $this->enrollModel->getCustomerData($customerId);
-    $this->sendNotification($row2[0]);
-    //print_r($result);
-    return $result;
-  }
+ 
 
   public function savescreen()
   {
@@ -585,7 +464,7 @@ class Enrolls extends Controller
     //Recipients
     $mail->setFrom('lifeline@goknows.com', 'Lileline Orders');
     $mail->addAddress('xneriox@gmail.com');
-    //$mail->addAddress('rh3@goknows.com');
+    //$mail->addAddress('lifeline@goknows.com');
     //$mail->addCC('jparker@galaxydistribution.com'); 
     //$mail->addCC('currutia44@gmail.com');      // Add a recipient
     //$mail->addBCC('xneriox@gmail.com');

@@ -18,11 +18,11 @@
         'mail' => 'emmizy2015@gmail.com'
       ];
      
-      $this->view('pages/index', $data);
+      $this->view('pages/index2', $data);
     }
 
     public function index2(){
-      $this->view('pages/index2');
+      $this->view('pages/index');
     }
 
     public function about(){
