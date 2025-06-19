@@ -99,7 +99,7 @@ class Record {
 	}
 
     public function getCustomerInfo($customer_id){
-        $this->db->query('SELECT * FROM lifeline_records lr JOIN lifeline_programs lp ON lr.program_benefit = lp.id_program  WHERE customer_id=:id');
+        $this->db->query('SELECT * FROM lifeline_records lr LEFT JOIN lifeline_programs lp ON lr.program_benefit = lp.id_program  WHERE customer_id=:id');
 		$this->db->bind("id",$customer_id);
 		$getOrder = $this->db->single();
 
@@ -107,7 +107,7 @@ class Record {
         $this->db->bind("id",$customer_id);
 		$getDocuments = $this->db->resultSet();
         
-        $getOrder['documents']=$getDocuments;
+        $getOrder['documents']=($getDocuments)?$getDocuments:null;
 		return $getOrder;
     }
 	

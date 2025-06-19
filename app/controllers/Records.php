@@ -228,6 +228,7 @@
 		}
 
         public function edit($customerId){
+			//echo $customerId;
             $data = $this->recordsModel->getCustomerInfo($customerId);
             //print_r($data);
             $this->view("records/edit",$data);
