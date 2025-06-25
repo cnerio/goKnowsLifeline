@@ -95,7 +95,7 @@ class Enrolls extends Controller
         $data['msg']= 'CAPTCHA verification failed';
       }else{
         $phonenumber = preg_replace('/[^0-9]/', '', $_POST['phone']);
-        $dob = date('Y-m-d', strtotime($_POST['dobY'] . "-" . $_POST['dobD'] . "-" . $_POST['dobM']));
+        $dob = date("m/d/Y", strtotime($_POST['dobY'] . "-" . $_POST['dobD'] . "-" . $_POST['dobM']));
         if(isset($_POST['customer_id'])){
           $customer_id = $_POST['customer_id'];
         }else{
