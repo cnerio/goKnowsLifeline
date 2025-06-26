@@ -463,8 +463,8 @@ class Enrolls extends Controller
     $mail->Port       = 587;                                 // TCP port to connect to
     //Recipients
     $mail->setFrom('lifeline@goknows.com', 'Lileline Orders');
-    $mail->addAddress('xneriox@gmail.com');
-    //$mail->addAddress('lifeline@goknows.com');
+    //$mail->addAddress('xneriox@gmail.com');
+    $mail->addAddress('lifeline@goknows.com');
     //$mail->addCC('jparker@galaxydistribution.com'); 
     //$mail->addCC('currutia44@gmail.com');      // Add a recipient
     //$mail->addBCC('xneriox@gmail.com');
