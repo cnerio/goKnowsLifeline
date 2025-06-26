@@ -120,7 +120,15 @@ class Enrolls extends Controller
           "shipping_zipcode" => (isset($_POST['shipzipcode'])) ? $_POST['shipzipcode'] : null,
           "order_step" => "Step 1",
           "URL" => $_POST['url'],
-          "company" => $_POST['company']
+          "company" => $_POST['company'],
+          "utm_source" => (isset($_GET['utm_source'])) ? $_GET['utm_source'] : null,
+          "utm_medium" => (isset($_GET['utm_medium'])) ? $_GET['utm_medium'] : null,
+          "utm_campaign" => (isset($_GET['utm_campaign'])) ? $_GET['utm_campaign'] : null,
+          "utm_content" => (isset($_GET['utm_content'])) ? $_GET['utm_content'] : null,
+          "match_type" => (isset($_GET['match_type'])) ? $_GET['match_type'] : null,
+          "utm_adgroup" => (isset($_GET['utm_adgroup'])) ? $_GET['utm_adgroup'] : null,
+          "gclid" => (isset($_GET['gclid'])) ? $_GET['gclid'] : null,
+          "fbclid" => (isset($_GET['fbclid'])) ? $_GET['fbclid'] : null
         ];
         if($customer_id){
           $data['customer_id']=$customer_id;
@@ -186,7 +194,10 @@ class Enrolls extends Controller
 
   public function savestep3()
   {
-    session_start();
+      // Inicia sesión solo si no ha sido iniciada aún
+  if (session_status() !== PHP_SESSION_ACTIVE) {
+      session_start();
+  }
 
     // Prevent multiple submissions within a short time
     if (isset($_SESSION['form_submitted']) && $_SESSION['form_submitted'] === true) {

@@ -2,11 +2,17 @@
 <?php 
 $apply=false;
 require APPROOT . '/views/inc/navbar.php'; 
-?>
 
-<?php 
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
 $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+$utm_source = isset($_GET['utm_source']) ? $_GET['utm_source'] : null;
+$utm_medium = isset($_GET['utm_medium']) ? $_GET['utm_medium'] : null;
+$utm_campaign = isset($_GET['utm_campaign']) ? $_GET['utm_campaign'] : null;
+$utm_content = isset($_GET['utm_content']) ? $_GET['utm_content'] : null;
+$match_type = isset($_GET['match_type']) ? $_GET['match_type'] : null;
+$utm_adgroup = isset($_GET['utm_adgroup']) ? $_GET['utm_adgroup'] : null;
+$gclid = isset($_GET['gclid']) ? $_GET['gclid'] : null;
+$fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
 ?>
 <section class="py-5 mt-5">
     <div class="container py-5">
@@ -284,6 +290,14 @@ $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                                 </div>
                             <input type="hidden" id="url" name="url" value="<?php echo $full_url; ?>">
                             <input type="hidden" id="company" name="company" value="GOTECH">
+                            <input type="hidden" id="utm_source" name="utm_source" value="<?php echo $utm_source; ?>">
+                            <input type="hidden" id="utm_medium" name="utm_medium" value="<?php echo $utm_medium; ?>">
+                            <input type="hidden" id="utm_campaign" name="utm_campaign" value="<?php echo $utm_campaign; ?>">
+                            <input type="hidden" id="utm_content" name="utm_content" value="<?php echo $utm_content; ?>">
+                            <input type="hidden" id="match_type" name="match_type" value="<?php echo $match_type; ?>">
+                            <input type="hidden" id="utm_adgroup" name="utm_adgroup" value="<?php echo $utm_adgroup; ?>">
+                            <input type="hidden" id="gclid" name="gclid" value="<?php echo $gclid; ?>">
+                            <input type="hidden" id="fbclid" name="fbclid" value="<?php echo $fbclid; ?>">
                         </section>
 
                         <h3>Eligibility</h3>
