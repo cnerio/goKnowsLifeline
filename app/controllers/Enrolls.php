@@ -95,7 +95,7 @@ class Enrolls extends Controller
         $data['msg']= 'CAPTCHA verification failed';
       }else{
         $phonenumber = preg_replace('/[^0-9]/', '', $_POST['phone']);
-        $dob = date("m/d/Y", strtotime($_POST['dobY'] . "-" . $_POST['dobD'] . "-" . $_POST['dobM']));
+        $dob = date("m/d/Y", strtotime($_POST['dobM'] . "/" . $_POST['dobD'] . "/" . $_POST['dobY']));
         if(isset($_POST['customer_id'])){
           $customer_id = $_POST['customer_id'];
         }else{
@@ -255,10 +255,61 @@ class Enrolls extends Controller
     }
   }
 
+  public function sendIdFile($customerId){
+    $this->APIService = new APIprocess();
+    $row = $this->enrollModel->getCustomerData($customerId);
+    //print_r($row);
+    $checkID = $this->APIService->getIdfile($customerId,$this->enrollModel);
+    $credentials=$this->enrollModel->getCredentials();
+    if($row[0]['order_id']>0){
+      if($checkID){
+                // Read the image file into a binary string 
+                $imageData = file_get_contents($checkID['filepath']);
+
+                // Encode the binary data to base64
+                $IDbase64 = base64_encode($imageData);
+                $uploadId=UploadDocument($credentials[0], $row[0]['order_id'], $customerId.".png", $IDbase64, '100001');
+                if($uploadId['status']=="success"){
+                  $saveCreateIDLog=[
+                    "customer_id"=>$customerId,
+                    "url"=>$uploadId['url'],
+                    "request"=>$uploadId['request'],
+                    "response"=>json_encode($uploadId['response']),
+                    "title"=>$uploadId['title']
+                  ];
+                  $this->enrollModel->saveData($saveCreateIDLog,'lifeline_apis_log');
+                  $fileId = ["customer_id"=>$customerId,"to_unavo"=>1];
+                 // $enrollModel->saveData($fileId,'lifeline_documents');
+                 $this->enrollModel->updateData($fileId ,'lifeline_documents');
+                 echo "ID FILE UPLOADED";
+                }else{
+                echo "ID FILE COULDN'T BE UPLOAD";
+              }
+              }else{
+                echo "ID FILE NOT FOUND";
+              }
+    }else{
+      echo "ORDER ID NOT FOUND";
+    }
+  }
+
   public function testprocess()
   {
-    $row2 = $this->enrollModel->getCustomerData('G-SN3X0005');
-    $this->sendNotification($row2[0]);
+    $this->APIService = new APIprocess();
+    $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
+    //print_r($row);
+    if($row){
+      // Read the image file into a binary string
+    $imageData = file_get_contents($row['filepath']);
+
+    // Encode the binary data to base64
+    $base64 = base64_encode($imageData);
+    //echo $base64;
+    }else{
+      echo "File not found";
+    }
+    //$row2 = $this->enrollModel->getCustomerData('G-SN3X0005');
+    //$this->sendNotification($row2[0]);
   }
 
  

@@ -667,7 +667,7 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
 				  		//console.log('valid'); 
                         customer_id=$("#customer_id").val();
                         let step1Data = $("#enrollForm-p-0 :input").serialize();
-                        let dob = $("#dobY").val()+"-"+$("#dobM").val()+"-"+$("#dobD").val();
+                        //let dob = $("#dobY").val()+"-"+$("#dobM").val()+"-"+$("#dobD").val();
                         //step1Data.push({gresponse: response});
                         if(customer_id.length>0){
                             step1Data += "&customer_id="+customer_id;

@@ -66,4 +66,11 @@ class Enroll {
         return $result;
     }
 
+    public function checkIdFile($customerId){
+        $this->db->query("SELECT * FROM lifeline_documents WHERE customer_id=:custId and type_doc='ID';");
+        $this->db->bind(":custId",$customerId);
+        $result = $this->db->single();
+        return $result;
+    }
+
 }
