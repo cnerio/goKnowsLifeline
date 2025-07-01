@@ -29,7 +29,7 @@ class Enroll {
     }
 
     public function getCustomerData($customerId){
-        $this->db->query('SELECT * FROM lifeline_records WHERE customer_id=:customer_id');
+        $this->db->query("SELECT * FROM lifeline_records WHERE customer_id=:customer_id");
         $this->db->bind(":customer_id",$customerId);
         $result = $this->db->resultSet();
         return $result;

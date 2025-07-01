@@ -293,23 +293,11 @@ class Enrolls extends Controller
     }
   }
 
-  public function testprocess()
+  public function testprocess($customerId)
   {
-    $this->APIService = new APIprocess();
-    $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
-    //print_r($row);
-    if($row){
-      // Read the image file into a binary string
-    $imageData = file_get_contents($row['filepath']);
-
-    // Encode the binary data to base64
-    $base64 = base64_encode($imageData);
-    //echo $base64;
-    }else{
-      echo "File not found";
-    }
-    //$row2 = $this->enrollModel->getCustomerData('G-SN3X0005');
-    //$this->sendNotification($row2[0]);
+    echo $customerId;
+    $row = $this->enrollModel->getCustomerData($customerId);
+    print_r($row);
   }
 
  
