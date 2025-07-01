@@ -270,46 +270,114 @@ class Enrolls extends Controller
   }
 
   public function getdocuments($orderId64){
+
+    $data = [
+      "orderId"=>$orderId64
+    ];
     
-    $this->view('enrolls/documents',$orderId64);
+    $this->view('enrolls/documents',$data);
   }
 
-  public function sendIdFile($customerId){
-    $this->APIService = new APIprocess();
-    $row = $this->enrollModel->getCustomerData($customerId);
-    //print_r($row);
-    $checkID = $this->APIService->getIdfile($customerId,$this->enrollModel);
-    $credentials=$this->enrollModel->getCredentials();
-    if($row[0]['order_id']>0){
-      if($checkID){
-                // Read the image file into a binary string 
-                $imageData = file_get_contents($checkID['filepath']);
+  public function saveFiles($base64_string,$customer_id,$fileType){
+        $filepath = saveBase64File($base64_string, $customer_id,$fileType);
+        $fileData = [
+          "customer_id" => $customer_id,
+          "filepath" => $filepath,
+          "type_doc" => $fileType
+        ];
+        $fileData['status'] = ($this->enrollModel->saveData($fileData, 'lifeline_documents')) ? true : false;
+        return $fileData;
+  }
 
+  public function saveDocuments(){
+    if ($_SERVER['REQUEST_METHOD'] == "POST") {
+      $data = json_decode(file_get_contents('php://input'), true);
+      // $data = [
+      //     "identity_proof" => $_POST['identity_proof'],
+      //     "benefit_proof" => $_POST['benefit_proof'],
+      //     "order_id"=>$_POST['order_id']
+      //   ];
+      
+      $customerData = $this->enrollModel->getCustomerbyOrderId($data['order_id']);
+      $customerId=$customerData[0]['customer_id'];
+      //print_r($customerData);
+      if($customerData){
+        $idFile=$this->saveFiles($data['identity_proof'],$customerId,"ID");
+        if($idFile['status']){
+          $data['idStatusApi']=$this->sendDocuments($customerId,$data['order_id'],"ID");
+        }
+        $pobFile=$this->saveFiles($data['benefit_proof'],$customerId,"POB");
+        if($pobFile['status']){
+          $data['pobStatusApi']=$this->sendDocuments($customerId,$data['order_id'],"POB");
+        }
+      }else{
+        $data['idFileStatus']=$this->saveFiles($data['identity_proof'],$data['order_id'],"ID");
+        $data['pobFileStatus']=$this->saveFiles($data['benefit_proof'],$data['order_id'],"POB");
+      }
+      $data["message"]="Files Upload Susccesfully";
+      echo json_encode($data);
+    }
+  }
+
+  public function sendDocuments($customerId,$orderId,$fileType){
+    $this->APIService = new APIprocess();
+    //$row = $this->enrollModel->getCustomerData($customerId);
+    switch($fileType){
+      case "ID":
+        $fileID="100001";
+        break;
+      case "POB":
+        $fileID="100000";
+        break;
+      case "Consent":
+        $fileID="100025";
+        break;
+    }
+    //print_r($row);
+    $fileData = $this->APIService->getSavedfiles($customerId,$this->enrollModel,$fileType);
+    $credentials=$this->enrollModel->getCredentials();
+    if($orderId>0){
+      if($fileData){
+                // Read the image file into a binary string 
+                $imageData = file_get_contents($fileData['filepath']);
+                $filename = basename($fileData['filepath']);
                 // Encode the binary data to base64
-                $IDbase64 = base64_encode($imageData);
-                $uploadId=UploadDocument($credentials[0], $row[0]['order_id'], $customerId.".png", $IDbase64, '100001');
-                if($uploadId['status']=="success"){
+                $base64 = base64_encode($imageData);
+                $upload=UploadDocument($credentials[0], $orderId, $filename, $base64, $fileID);
+                if($upload['status']=="success"){
                   $saveCreateIDLog=[
                     "customer_id"=>$customerId,
-                    "url"=>$uploadId['url'],
-                    "request"=>$uploadId['request'],
-                    "response"=>json_encode($uploadId['response']),
-                    "title"=>$uploadId['title']
+                    "url"=>$upload['url'],
+                    "request"=>$upload['request'],
+                    "response"=>json_encode($upload['response']),
+                    "title"=>$upload['title']
                   ];
                   $this->enrollModel->saveData($saveCreateIDLog,'lifeline_apis_log');
-                  $fileId = ["customer_id"=>$customerId,"to_unavo"=>1];
+                  $fileupdate = ["id_lifeline_doc"=>$fileData['id_lifeline_doc'],"to_unavo"=>1];
                  // $enrollModel->saveData($fileId,'lifeline_documents');
-                 $this->enrollModel->updateData($fileId ,'lifeline_documents');
-                 echo "ID FILE UPLOADED";
+                 $this->enrollModel->updateData($fileupdate ,'lifeline_documents');
+                 //echo "ID FILE UPLOADED";
+                 $result=["status"=>"success","msg"=>$fileType." FILE  UPLOADED"];
                 }else{
-                echo "ID FILE COULDN'T BE UPLOAD";
+                  $saveCreateIDLog=[
+                    "customer_id"=>$customerId,
+                    "url"=>$upload['url'],
+                    "request"=>$upload['request'],
+                    "response"=>json_encode($upload['response']),
+                    "title"=>$upload['title']
+                  ];
+                  $this->enrollModel->saveData($saveCreateIDLog,'lifeline_apis_log');
+                //echo "ID FILE COULDN'T BE UPLOAD";
+                $result=["status"=>"fail","msg"=>$fileType." FILE COULDN'T BE UPLOAD"];
               }
               }else{
-                echo "ID FILE NOT FOUND";
+                 $result=["status"=>"fail","msg"=>$fileType." Couldn't be uploaded. File Data not Found"];
               }
     }else{
-      echo "ORDER ID NOT FOUND";
+      $result=["status"=>"fail","msg"=>$fileType." Couldn't be uploaded.Order ID not Found"];
     }
+
+    return $result;
   }
 
 

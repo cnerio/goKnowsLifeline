@@ -850,7 +850,7 @@ function UploadDocumentTest($credentials, $order_id, $filename, $fileBase64, $Do
         "url" => $url,
         "request" => $request_1,
         "response" => $response_1,
-        "title" => 'upload Doc1'
+        "title" => 'upload Doc '.$DocumentTypeID
     ];
 }
 
@@ -888,7 +888,7 @@ function UploadDocument($credentials, $order_id, $filename, $fileBase64, $Docume
         "url" => $url,
         "request" => $request_1,
         "response" => $response_1,
-        "title" => 'upload Doc1'
+        "title" => 'UploadDocumentAPI_'.$DocumentTypeID
     ];
     //return  $response_1;
 
