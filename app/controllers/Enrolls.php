@@ -317,12 +317,12 @@ class Enrolls extends Controller
   public function testprocess()
   {
     $this->APIService = new APIprocess();
-    $row = $this->APIService->getIdfile('G-SN3X0108',$this->enrollModel);
-    print_r($row);
+    $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
+    //print_r($row);
     if($row){
       // Read the image file into a binary string
     $imageData = file_get_contents($row['filepath']);
-    echo $filename = basename($row['filepath']);
+
     // Encode the binary data to base64
     $base64 = base64_encode($imageData);
     //echo $base64;

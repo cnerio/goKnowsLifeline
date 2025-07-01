@@ -49,7 +49,7 @@ Class APIprocess{
                 $filename = basename($checkID['filepath']);
                 // Encode the binary data to base64
                 $IDbase64 = base64_encode($imageData);
-                $uploadId=UploadDocument($credentials[0], $row[0]['order_id'], $filename , $IDbase64, '100001');
+                $uploadId=UploadDocument($credentials[0], $row[0]['order_id'], $customerId.".png", $IDbase64, '100001');
                 if($uploadId['status']=="success"){
                   $saveCreateIDLog=[
                     "customer_id"=>$customerId,
@@ -102,7 +102,7 @@ Class APIprocess{
                 "filepath"=>$consentFile64['URL'],
                 "type_doc"=>"Consent"
               ];
-              $uploadConsent=UploadDocument($credentials[0], $createResponse['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
+              $uploadConsent=UploadDocument($credentials[0], $row[0]['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
               //$uploadConsent['customer_id']=$customerId;
               $processData['process_status']="submitting Consent API";
               $enrollModel->updateData($processData,'lifeline_records');
