@@ -187,6 +187,20 @@ class Enrolls extends Controller
         $fileData['statusFile'] = true;
       }
 
+      if (!empty($_POST['pob'])) {
+        $base64_string_pob= $_POST['pob'];
+        $customer_id = $data['customer_id'];
+        $filepath2 = saveBase64File($base64_string_pob, $customer_id, "POB");
+        $pobData = [
+          "customer_id" => $customer_id,
+          "filepath" => $filepath2,
+          "type_doc" => "POB"
+        ];
+        $fileData['statusFile'] = ($this->enrollModel->saveData($pobData, 'lifeline_documents')) ? true : false;
+      } else {
+        $fileData['statusFile'] = true;
+      }
+
 
       echo json_encode($fileData);
     }
@@ -255,6 +269,11 @@ class Enrolls extends Controller
     }
   }
 
+  public function getdocuments($orderId64){
+    
+    $this->view('enrolls/documents',$orderId64);
+  }
+
   public function sendIdFile($customerId){
     $this->APIService = new APIprocess();
     $row = $this->enrollModel->getCustomerData($customerId);
@@ -293,15 +312,17 @@ class Enrolls extends Controller
     }
   }
 
+
+
   public function testprocess()
   {
     $this->APIService = new APIprocess();
-    $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
-    //print_r($row);
+    $row = $this->APIService->getIdfile('G-SN3X0108',$this->enrollModel);
+    print_r($row);
     if($row){
       // Read the image file into a binary string
     $imageData = file_get_contents($row['filepath']);
-
+    echo $filename = basename($row['filepath']);
     // Encode the binary data to base64
     $base64 = base64_encode($imageData);
     //echo $base64;

@@ -58,7 +58,7 @@ if (isset($arrayPost['orderId'])) {
             $dob = $row['dob'];
             $ssn = $row['ssn'];
             $tribal_id = $row['tribal_id'];
-            $dobParts = explode('-', $dob);
+            $dobParts = explode('/', $dob);
             $month = $dobParts[0];
             $day = $dobParts[1];
             $year = $dobParts[2];

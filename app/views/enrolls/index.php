@@ -427,12 +427,21 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mb-2">
                                 <div class="col-md-12">
                                     <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID <span class="requiredmark">*</span></span>
-                                    <br><label id="fileInputerror" style="display:none;" class="error" for="fileInput"></label>
+                                    <br><label id="fileInputolderror" style="display:none;" class="error" for="fileInput"></label>
                                     <input type="file" name="fileInput" id="fileInput" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
                                     <div id="preview"></div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <span class="btn btn-lg btn-primary" id="uploadBtnpob">Click to upload your Proof of Benefit <span class="requiredmark">*</span></span>
+                                    <br><label id="fileInputerror" style="display:none;" class="error" for="fileInput2"></label>
+                                    <input type="file" name="fileInput2" id="fileInput2" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
+                                    <div id="preview2"></div>
                                 </div>
                             </div>
                             
@@ -707,13 +716,11 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                 } else if (currentIndex === 1) {
                     //let step2Data = $("#enrollForm-p-1 :input").serialize();  
                     //benefitProgram = (benefitProgram=="")?$("#eligibility_program").val():benefitProgram;
-                    //console.log(benefitProgram)
-                    if(!base64String){
-                        $("#fileInputerror").show()
-                        $("#fileInputerror").html("File ID is required, you must upload a file")
-                    }else{
+                    //console.log(base64String)
+                    //console.log(pobbase64String)
+                    if(base64String && pobbase64String){
                         $("#fileInputerror").hide()
-                        $("#fileInputerror").html('')
+                        $("#fileInputerror").html("")
                         $.ajax({
                             url: "<?php echo URLROOT; ?>/enrolls/savestep2",
                             method: "POST",
@@ -723,7 +730,8 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                                 customer_id:$("#customer_id").val(),
                                 current_benefits:radioCheck('current_benefits'),
                                 type_phone:($('input[name="type_phone"]').is(':checked'))?$('input[name="type_phone"]:checked').val():'',
-                                govId:(base64String)?base64String:null
+                                govId:(base64String)?base64String:null,
+                                pob:(pobbase64String)?pobbase64String:null
                             },
                             async: false, // block navigation until response
                             success: function(response) {
@@ -747,6 +755,10 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                                 alert("Error saving step " + currentIndex);
                             }
                         });
+                    }else{
+                        $("#fileInputerror").show()
+                        $("#fileInputerror").html('File ID and Proof of Benefit are required, you must upload your files')
+                        
                     }
 
                     
@@ -920,9 +932,16 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
 
   let base64String = "";
   let uploadedFileName = "";
+  let pobbase64String = "";
+  let pobuploadedFileName = "";
 
   $('#uploadBtn').on('click', function () {
     $('#fileInput').click();
+    //$("#fileInputerror").html('')
+  });
+
+   $('#uploadBtnpob').on('click', function () {
+    $('#fileInput2').click();
     //$("#fileInputerror").html('')
   });
 
@@ -957,6 +976,38 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
     reader.readAsDataURL(file);
   });
 
+   $('#fileInput2').on('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    $("#fileInputerror").html('')
+    const reader = new FileReader();
+
+    reader.onload = function () {
+      pobbase64String = reader.result;
+      pobuploadedFileName = file.name;
+
+      // Hide upload button
+      $('#uploadBtnpob').hide();
+
+      // Show preview
+      let previewHtml = '';
+
+      if (file.type.startsWith('image/')) {
+        previewHtml = `<img src="${base64String}" style="max-width:200px; display:block; margin-bottom:10px;">`;
+      } else {
+        previewHtml = `<p>📄 ${file.name}</p>`;
+      }
+
+      // Add remove button
+      previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn2">Remove</button>`;
+
+      $('#preview2').html(previewHtml);
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+
   // Remove handler
   $(document).on('click', '#removeBtn', function () {
     base64String = "";
@@ -964,6 +1015,15 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
     $('#preview').empty();
     $('#uploadBtn').show();
     $('#fileInput').val(""); // Clear file input
+  });
+
+   // Remove handler
+  $(document).on('click', '#removeBtn2', function () {
+    base64String = "";
+    uploadedFileName = "";
+    $('#preview2').empty();
+    $('#uploadBtnpob').show();
+    $('#fileInput2').val(""); // Clear file input
   });
 
   function radioCheck(name) {

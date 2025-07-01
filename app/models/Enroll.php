@@ -35,6 +35,13 @@ class Enroll {
         return $result;
     }
 
+    public function getCustomerbyOrderId($orderId){
+        $this->db->query('SELECT * FROM lifeline_records WHERE order_id=:orderId');
+        $this->db->bind(":orderId",$orderId);
+        $result = $this->db->resultSet();
+        return $result;
+    }
+
     public function updateData($data,$table){
         $this->db->updateQuery($table,$data,"customer_id=:customer_id");
     }
@@ -42,6 +49,11 @@ class Enroll {
     public function updateDataById($data,$table){
        $result =  $this->db->updateQuery($table,$data,"id=:id");
        return $result;
+    }
+
+    public function updateDocStatus($data,$table){
+        $result = $this->db->updateQuery($table,$data,"id_lifeline_doc=:id_lifeline_doc");
+        return $result;
     }
 
     public function updateCusId($lastId,$customerId,$table){
@@ -69,6 +81,14 @@ class Enroll {
     public function checkIdFile($customerId){
         $this->db->query("SELECT * FROM lifeline_documents WHERE customer_id=:custId and type_doc='ID';");
         $this->db->bind(":custId",$customerId);
+        $result = $this->db->single();
+        return $result;
+    }
+
+    public function getFiles($customerId,$filetype){
+        $this->db->query("SELECT * FROM lifeline_documents WHERE customer_id=:custId and type_doc=:filetype;");
+        $this->db->bind(":custId",$customerId);
+        $this->db->bind(":filetype",$filetype);
         $result = $this->db->single();
         return $result;
     }

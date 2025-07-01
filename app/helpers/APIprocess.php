@@ -40,15 +40,16 @@ Class APIprocess{
               ];
               $enrollModel->updateData($dataOrder,"lifeline_records");
                $row = $enrollModel->getCustomerData($customerId);
-
-              $checkID = $this->getIdfile($customerId,$enrollModel);
+              
+              //Checking id file, process to send to shockwave
+              $checkID = $this->getSavedfiles($customerId,$enrollModel,"ID");
               if($checkID){
                 // Read the image file into a binary string
                 $imageData = file_get_contents($checkID['filepath']);
-
+                $filename = basename($checkID['filepath']);
                 // Encode the binary data to base64
                 $IDbase64 = base64_encode($imageData);
-                $uploadId=UploadDocument($credentials[0], $createResponse['order_id'], $customerId.".png", $IDbase64, '100001');
+                $uploadId=UploadDocument($credentials[0], $row[0]['order_id'], $filename , $IDbase64, '100001');
                 if($uploadId['status']=="success"){
                   $saveCreateIDLog=[
                     "customer_id"=>$customerId,
@@ -58,12 +59,35 @@ Class APIprocess{
                     "title"=>$uploadId['title']
                   ];
                   $enrollModel->saveData($saveCreateIDLog,'lifeline_apis_log');
-                  $fileId = ["customer_id"=>$customerId,"to_unavo"=>1];
+                  $fileId = ["id_lifeline_doc"=>$checkID['id_lifeline_doc'] ,"to_unavo"=>1];
                  // $enrollModel->saveData($fileId,'lifeline_documents');
-                 $enrollModel->updateData($fileId ,'lifeline_documents');
+                 $enrollModel->updateDocStatus($fileId,'lifeline_documents');
                 }
               }
 
+              //Checking POB file, process to send toshockwave
+              $checkPOB = $this->getSavedfiles($customerId,$enrollModel,"POB");
+              if($checkPOB){
+                // Read the image file into a binary string
+                $imageDatapob = file_get_contents($checkPOB['filepath']);
+                $filenamepob = basename($checkPOB['filepath']);
+                // Encode the binary data to base64
+                $POBbase64 = base64_encode($imageDatapob);
+                $uploadPOB=UploadDocument($credentials[0], $row[0]['order_id'], $filenamepob, $POBbase64, '100000');
+                if($uploadPOB['status']=="success"){
+                  $saveCreatePOBLog=[
+                    "customer_id"=>$customerId,
+                    "url"=>$uploadPOB['url'],
+                    "request"=>$uploadPOB['request'],
+                    "response"=>json_encode($uploadPOB['response']),
+                    "title"=>$uploadPOB['title']
+                  ];
+                  $enrollModel->saveData($saveCreatePOBLog,'lifeline_apis_log');
+                  $fileId = ["id_lifeline_doc"=>$checkPOB['id_lifeline_doc'],"to_unavo"=>1];
+                 // $enrollModel->saveData($fileId,'lifeline_documents');
+                 $enrollModel->updateDocStatus($fileId ,'lifeline_documents');
+                }
+              }
 
             $consentFile64=$this->getConsentFile($row[0]['order_id']);
             //$consentFile64 = getConsent64($row[0]);
@@ -169,6 +193,12 @@ Class APIprocess{
       $checkID = $enrollModel->checkIdFile($customerID);
       //print_r($checkID);
       return $checkID;
+    }
+
+    public function getSavedfiles($customerID,$enrollModel,$filetype){
+      $fileData = $enrollModel->getFiles($customerID,$filetype);
+      //print_r($checkID);
+      return $fileData ;
     }
 
     public function getConsentFile($orderId){
