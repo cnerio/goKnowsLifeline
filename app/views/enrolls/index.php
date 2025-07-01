@@ -429,8 +429,8 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID</span>
-                                    <br><span><b>Not Required</b></span>
+                                    <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID <span class="requiredmark">*</span></span>
+                                    <br><label id="fileInputerror" style="display:none;" class="error" for="fileInput"></label>
                                     <input type="file" name="fileInput" id="fileInput" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
                                     <div id="preview"></div>
                                 </div>
@@ -708,39 +708,46 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                     //let step2Data = $("#enrollForm-p-1 :input").serialize();  
                     //benefitProgram = (benefitProgram=="")?$("#eligibility_program").val():benefitProgram;
                     //console.log(benefitProgram)
-                    $.ajax({
-                        url: "<?php echo URLROOT; ?>/enrolls/savestep2",
-                        method: "POST",
-                        data: {
-                            eligibility_program:$("#eligibility_program").val(),
-                            nv_application_id:$("#nv_application_id").val(),
-                            customer_id:$("#customer_id").val(),
-                            current_benefits:radioCheck('current_benefits'),
-                            type_phone:($('input[name="type_phone"]').is(':checked'))?$('input[name="type_phone"]:checked').val():'',
-                            govId:(base64String)?base64String:null
-                        },
-                        async: false, // block navigation until response
-                        success: function(response) {
-                            console.log("Step " + currentIndex + " saved.");
-                            console.log(response);
-                            var myOBj = JSON.parse(response);
-                            if(myOBj.statusFile){
-                                canProceed = true;
-                                let firstname = $("#firstname").val();
-                                let lastname = $("#lastname").val();
-                                let initials = firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
-                                let state = $("#state").val();
-                                getAgreementsItems(state,initials);
-                                getDatetime();
-                            }else{
-                                canProceed = false;
-                            }
+                    if(!base64String){
+                        $("#fileInputerror").show()
+                        $("#fileInputerror").html("File ID is required, you must upload a file")
+                    }else{
+                        $("#fileInputerror").hide()
+                        $("#fileInputerror").html('')
+                        $.ajax({
+                            url: "<?php echo URLROOT; ?>/enrolls/savestep2",
+                            method: "POST",
+                            data: {
+                                eligibility_program:$("#eligibility_program").val(),
+                                nv_application_id:$("#nv_application_id").val(),
+                                customer_id:$("#customer_id").val(),
+                                current_benefits:radioCheck('current_benefits'),
+                                type_phone:($('input[name="type_phone"]').is(':checked'))?$('input[name="type_phone"]:checked').val():'',
+                                govId:(base64String)?base64String:null
+                            },
+                            async: false, // block navigation until response
+                            success: function(response) {
+                                console.log("Step " + currentIndex + " saved.");
+                                console.log(response);
+                                var myOBj = JSON.parse(response);
+                                if(myOBj.statusFile){
+                                    canProceed = true;
+                                    let firstname = $("#firstname").val();
+                                    let lastname = $("#lastname").val();
+                                    let initials = firstname.charAt(0).toUpperCase() + lastname.charAt(0).toUpperCase();
+                                    let state = $("#state").val();
+                                    getAgreementsItems(state,initials);
+                                    getDatetime();
+                                }else{
+                                    canProceed = false;
+                                }
 
-                        },
-                        error: function() {
-                            alert("Error saving step " + currentIndex);
-                        }
-                    });
+                            },
+                            error: function() {
+                                alert("Error saving step " + currentIndex);
+                            }
+                        });
+                    }
 
                     
                 }
@@ -916,12 +923,13 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
 
   $('#uploadBtn').on('click', function () {
     $('#fileInput').click();
+    //$("#fileInputerror").html('')
   });
 
   $('#fileInput').on('change', function () {
     const file = this.files[0];
     if (!file) return;
-
+    $("#fileInputerror").html('')
     const reader = new FileReader();
 
     reader.onload = function () {
