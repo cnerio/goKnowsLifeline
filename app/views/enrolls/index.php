@@ -993,7 +993,7 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
       let previewHtml = '';
 
       if (file.type.startsWith('image/')) {
-        previewHtml = `<img src="${base64String}" style="max-width:200px; display:block; margin-bottom:10px;">`;
+        previewHtml = `<img src="${pobbase64String}" style="max-width:200px; display:block; margin-bottom:10px;">`;
       } else {
         previewHtml = `<p>📄 ${file.name}</p>`;
       }
