@@ -431,7 +431,7 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                                 <div class="col-md-12">
                                     <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID <span class="requiredmark">*</span></span>
                                     <br><label id="fileInputolderror" style="display:none;" class="error" for="fileInput"></label>
-                                    <input type="file" name="fileInput" id="fileInput" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
+                                    <input type="file" name="fileInput" id="fileInput" accept="image/*,application/pdf,.doc,.docx" capture="camera" style="display: none;" />
                                     <div id="preview"></div>
                                 </div>
                             </div>
@@ -440,7 +440,7 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                                 <div class="col-md-12">
                                     <span class="btn btn-lg btn-primary" id="uploadBtnpob">Click to upload your Proof of Benefit <span class="requiredmark">*</span></span>
                                     <br><label id="fileInputerror" style="display:none;" class="error" for="fileInput2"></label>
-                                    <input type="file" name="fileInput2" id="fileInput2" accept="image/*,application/pdf,.doc,.docx" style="display: none;" />
+                                    <input type="file" name="fileInput2" id="fileInput2" accept="image/*,application/pdf,.doc,.docx" capture="camera" style="display: none;" />
                                     <div id="preview2"></div>
                                 </div>
                             </div>

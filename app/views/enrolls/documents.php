@@ -38,7 +38,7 @@ require APPROOT . '/views/inc/navbar.php';
                     <!-- Proof of Identity -->
                     <div class="mb-3">
                         <label for="identityProof" class="form-label">Proof of Identity</label>
-                        <input class="form-control" type="file" id="identityProof" accept=".jpg,.jpeg,.png,.pdf" required>
+                        <input class="form-control" type="file" id="identityProof" accept=".jpg,.jpeg,.png,.pdf" capture="camera" required>
                         <div class="form-text">Example: ID card, driver's license, passport.</div>
                         <div id="identityPreview" class="mt-2"></div>
                     </div>
@@ -46,7 +46,7 @@ require APPROOT . '/views/inc/navbar.php';
                     <!-- Proof of Benefit -->
                     <div class="mb-3">
                         <label for="benefitProof" class="form-label">Proof of Benefit</label>
-                        <input class="form-control" type="file" id="benefitProof" accept=".jpg,.jpeg,.png,.pdf" required>
+                        <input class="form-control" type="file" id="benefitProof" accept=".jpg,.jpeg,.png,.pdf"  capture="camera" required>
                         <div class="form-text">Example: eligibility letter or benefit notice.</div>
                         <div id="benefitPreview" class="mt-2"></div>
                     </div>

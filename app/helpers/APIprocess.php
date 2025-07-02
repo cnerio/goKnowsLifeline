@@ -110,6 +110,12 @@ Class APIprocess{
               $enrollModel->updateData($processData,'lifeline_records');
             // exit();
             if($consentFile64['status']=="success"){
+              $fileData = [
+                 "customer_id"=>$customerData[0]['customer_id'],
+                 "filepath"=>$consentFile64['URL'],
+                 "type_doc"=>"Consent"
+               ];
+               $enrollModel->saveData($fileData,'lifeline_documents');
               $ConsentFileResult = $this->sendDocuments($customerId,$row[0]['order_id'],"Consent",$enrollModel);
               $processData['process_status']=$ConsentFileResult['msg'];
               $enrollModel->updateData($processData,'lifeline_records');
