@@ -29,17 +29,18 @@ class Enroll {
     }
 
     public function getCustomerData($customerId){
-        $this->db->query("SELECT * FROM lifeline_records WHERE customer_id=:customer_id");
+        $this->db->query("SELECT * FROM lifeline_records WHERE customer_id=:customer_id;");
         $this->db->bind(":customer_id",$customerId);
         $result = $this->db->resultSet();
         return $result;
     }
 
     public function getCustomerbyOrderId($orderId){
-        $this->db->query('SELECT * FROM lifeline_records WHERE order_id=:orderId');
+        $this->db->query("SELECT * FROM lifeline_records WHERE order_id=:orderId;");
         $this->db->bind(":orderId",$orderId);
         $result = $this->db->resultSet();
         return $result;
+        //return "hola".$orderId;
     }
 
     public function updateData($data,$table){

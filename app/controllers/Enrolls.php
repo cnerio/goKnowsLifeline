@@ -269,7 +269,7 @@ class Enrolls extends Controller
     }
   }
 
-  public function getdocuments($orderId64){
+  public function getdocuments($orderId64=null){
 
     $data = [
       "orderId"=>$orderId64
@@ -292,15 +292,12 @@ class Enrolls extends Controller
   public function saveDocuments(){
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
       $data = json_decode(file_get_contents('php://input'), true);
-      // $data = [
-      //     "identity_proof" => $_POST['identity_proof'],
-      //     "benefit_proof" => $_POST['benefit_proof'],
-      //     "order_id"=>$_POST['order_id']
-      //   ];
+      //echo $data['order_id'];
       
-      $customerData = $this->enrollModel->getCustomerbyOrderId($data['order_id']);
-      $customerId=$customerData[0]['customer_id'];
+      $customerData = $this->enrollModel->getCustomerbyOrderId(trim($data['order_id']));
       //print_r($customerData);
+      $customerId=$customerData[0]['customer_id'];
+      
       if($customerData){
         $idFile=$this->saveFiles($data['identity_proof'],$customerId,"ID");
         if($idFile['status']){
@@ -355,7 +352,7 @@ class Enrolls extends Controller
                   $this->enrollModel->saveData($saveCreateIDLog,'lifeline_apis_log');
                   $fileupdate = ["id_lifeline_doc"=>$fileData['id_lifeline_doc'],"to_unavo"=>1];
                  // $enrollModel->saveData($fileId,'lifeline_documents');
-                 $this->enrollModel->updateData($fileupdate ,'lifeline_documents');
+                 $this->enrollModel->updateDocStatus($fileupdate ,'lifeline_documents');
                  //echo "ID FILE UPLOADED";
                  $result=["status"=>"success","msg"=>$fileType." FILE  UPLOADED"];
                 }else{
@@ -382,21 +379,24 @@ class Enrolls extends Controller
 
 
 
-  public function testprocess()
+  public function testprocess($orderId)
   {
-    $this->APIService = new APIprocess();
-    $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
-    //print_r($row);
-    if($row){
-      // Read the image file into a binary string
-    $imageData = file_get_contents($row['filepath']);
+     $customerData = $this->enrollModel->getCustomerbyOrderId($orderId);
+     echo $orderId;
+      print_r($customerData);
+    // $this->APIService = new APIprocess();
+    // $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
+    // //print_r($row);
+    // if($row){
+    //   // Read the image file into a binary string
+    // $imageData = file_get_contents($row['filepath']);
 
-    // Encode the binary data to base64
-    $base64 = base64_encode($imageData);
-    //echo $base64;
-    }else{
-      echo "File not found";
-    }
+    // // Encode the binary data to base64
+    // $base64 = base64_encode($imageData);
+    // //echo $base64;
+    // }else{
+    //   echo "File not found";
+    // }
     //$row2 = $this->enrollModel->getCustomerData('G-SN3X0005');
     //$this->sendNotification($row2[0]);
   }
