@@ -383,7 +383,17 @@ class Enrolls extends Controller
   {
      $customerData = $this->enrollModel->getCustomerbyOrderId($orderId);
      echo $orderId;
-      print_r($customerData);
+     echo "<br>";
+     $getAllFilesR = $this->getallfilessaved($customerData[0]['customer_id']);
+
+    //print_r($getAllFilesR);
+    $this->APIService = new APIprocess();
+    $response = [];
+    foreach($getAllFilesR as $records){
+      $response[]=$this->APIService->sendDocuments($customerData[0]['customer_id'],$customerData[0]['order_id'],$records['type_doc'],$this->enrollModel);
+      //echo $records['filepath'];
+    }
+    print_r($response);
     // $this->APIService = new APIprocess();
     // $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
     // //print_r($row);
@@ -401,7 +411,10 @@ class Enrolls extends Controller
     //$this->sendNotification($row2[0]);
   }
 
- 
+ public function getallfilessaved($customerId){
+  $getFiles = $this->enrollModel->getAllFiles($customerId);
+  return $getFiles;
+ }
 
   public function savescreen()
   {

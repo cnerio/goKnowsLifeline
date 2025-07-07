@@ -292,6 +292,8 @@ Class APIprocess{
                 // Read the image file into a binary string 
                 $imageData = file_get_contents($fileData['filepath']);
                 $filename = basename($fileData['filepath']);
+                //$compressed = gzencode($imageData);               // Compress with gzip
+    //$compressedBase64 = base64_encode($compressed);
                 // Encode the binary data to base64
                 $base64 = base64_encode($imageData);
                 $upload=UploadDocument($credentials[0], $orderId, $filename, $base64, $fileID);
@@ -319,7 +321,7 @@ Class APIprocess{
                   ];
                   $enrollModel->saveData($saveCreateIDLog,'lifeline_apis_log');
                 //echo "ID FILE COULDN'T BE UPLOAD";
-                $result=["status"=>"fail","msg"=>$fileType." FILE COULDN'T BE UPLOAD"];
+                $result=["status"=>"fail","msg"=>$fileType." FILE COULDN'T BE UPLOAD","request"=>$upload['request']];
               }
               }else{
                  $result=["status"=>"fail","msg"=>$fileType." Couldn't be uploaded. File Data not Found"];

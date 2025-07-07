@@ -94,4 +94,12 @@ class Enroll {
         return $result;
     }
 
+    public function getAllFiles($customerId){
+        //$this->db->query("SELECT * FROM lifeline_documents WHERE customer_id=:custId");
+        $this->db->query('SELECT distinct(type_doc),to_unavo,filepath,type_doc FROM applygoknows_records.lifeline_documents WHERE customer_id=:custId AND to_unavo=0 AND type_doc in ("ID","POB")');
+        $this->db->bind(":custId",$customerId);
+        $result = $this->db->resultSet();
+        return $result;
+    }
+
 }
