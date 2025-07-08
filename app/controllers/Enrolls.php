@@ -431,7 +431,7 @@ class Enrolls extends Controller
       $response=$this->APIService->sendDocuments($customerData[0]['customer_id'],$customerData[0]['order_id'],$typeDoc,$this->enrollModel);
       //echo $records['filepath'];
     //}
-    print_r($response['response']);
+    print_r($response);
     // $this->APIService = new APIprocess();
     // $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
     // //print_r($row);
