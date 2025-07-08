@@ -417,21 +417,21 @@ class Enrolls extends Controller
   }
 
 
-  public function testprocess($orderId)
+  public function testprocess($orderId,$typeDoc)
   {
      $customerData = $this->enrollModel->getCustomerbyOrderId($orderId);
-     echo $orderId;
-     echo "<br>";
-     $getAllFilesR = $this->getallfilessaved($customerData[0]['customer_id']);
+     //echo $orderId;
+     //echo "<br>";
+     //$getAllFilesR = $this->getallfilessaved($customerData[0]['customer_id']);
+    //getFiles($customerId,$filetype)
 
     //print_r($getAllFilesR);
     $this->APIService = new APIprocess();
-    $response = [];
-    foreach($getAllFilesR as $records){
-      $response[]=$this->APIService->sendDocuments($customerData[0]['customer_id'],$customerData[0]['order_id'],$records['type_doc'],$this->enrollModel);
+    //foreach($getAllFilesR as $records){
+      $response=$this->APIService->sendDocuments($customerData[0]['customer_id'],$customerData[0]['order_id'],$typeDoc,$this->enrollModel);
       //echo $records['filepath'];
-    }
-    print_r($response);
+    //}
+    print_r($response['response']);
     // $this->APIService = new APIprocess();
     // $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
     // //print_r($row);

@@ -321,7 +321,7 @@ Class APIprocess{
                   ];
                   $enrollModel->saveData($saveCreateIDLog,'lifeline_apis_log');
                 //echo "ID FILE COULDN'T BE UPLOAD";
-                $result=["status"=>"fail","msg"=>$fileType." FILE COULDN'T BE UPLOAD","request"=>$upload['request']];
+                $result=["status"=>"fail","msg"=>$fileType." FILE COULDN'T BE UPLOAD"];
               }
               }else{
                  $result=["status"=>"fail","msg"=>$fileType." Couldn't be uploaded. File Data not Found"];
