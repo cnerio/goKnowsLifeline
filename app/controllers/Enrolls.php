@@ -289,6 +289,30 @@ class Enrolls extends Controller
         return $fileData;
   }
 
+  public function saveStoredDoc(){
+    if ($_SERVER['REQUEST_METHOD'] == "POST") {
+      $data = json_decode(file_get_contents('php://input'), true);
+
+      
+      if (!isset($data['base64data']) || !isset($data['filename'])) {
+          echo json_encode(['success' => false, 'message' => 'Missing data']);
+          exit;
+      }
+
+      // Remove the base64 header part
+      $base64 = $data['base64data'];
+      $base64 = preg_replace('#^data:image/\w+;base64,#i', '', $base64);
+      $base64 = str_replace(' ', '+', $base64);
+      $customer_id=$data['customer_id'];
+      $imageData = base64_decode($base64);
+
+      $savePath = '../public/uploads/'.$customer_id.'/' . basename($data['filename']);
+      file_put_contents($savePath, $imageData);
+
+      echo json_encode(['success' => true, 'message' => 'Image saved', 'path' => $savePath]);
+    }
+  }
+
   public function saveDocuments(){
     if ($_SERVER['REQUEST_METHOD'] == "POST") {
       $data = json_decode(file_get_contents('php://input'), true);
@@ -377,6 +401,20 @@ class Enrolls extends Controller
     return $result;
   }
 
+  public function compress($customer_id,$typeFile){
+    $this->APIService = new APIprocess();
+  $fileData = $this->APIService->getSavedfiles($customer_id,$this->enrollModel,$typeFile);
+  //$imageData = file_get_contents($fileData['filepath']);
+  $filename = basename($fileData['filepath']);
+    $data=[
+      "imageFile"=>$fileData['filepath'],
+      "filename"=>$filename,
+      "customer_id"=>$customer_id
+    ];
+    //print_r($data);
+
+    $this->view("enrolls/compress",$data);
+  }
 
 
   public function testprocess($orderId)
