@@ -948,64 +948,171 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
   $('#fileInput').on('change', function () {
     const file = this.files[0];
     if (!file) return;
-    $("#fileInputerror").html('')
-    const reader = new FileReader();
 
-    reader.onload = function () {
-      base64String = reader.result;
-      uploadedFileName = file.name;
+    $("#fileInputerror").html('');
+    uploadedFileName = file.name;
 
-      // Hide upload button
-      $('#uploadBtn').hide();
+    if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const img = new Image();
+            img.src = reader.result;
 
-      // Show preview
-      let previewHtml = '';
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800;
+                const scale = MAX_WIDTH / img.width;
 
-      if (file.type.startsWith('image/')) {
-        previewHtml = `<img src="${base64String}" style="max-width:200px; display:block; margin-bottom:10px;">`;
-      } else {
-        previewHtml = `<p>📄 ${file.name}</p>`;
-      }
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scale;
 
-      // Add remove button
-      previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn">Remove</button>`;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      $('#preview').html(previewHtml);
-    };
+                // Compress image (JPEG, 70% quality)
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                base64String = compressedBase64;
 
-    reader.readAsDataURL(file);
-  });
+                // Update preview
+                let previewHtml = `<img src="${compressedBase64}" style="max-width:200px; display:block; margin-bottom:10px;">`;
+                previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn">Remove</button>`;
 
-   $('#fileInput2').on('change', function () {
+                $('#preview').html(previewHtml);
+                $('#uploadBtn').hide();
+            };
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // For PDF or other files
+        const reader = new FileReader();
+        reader.onload = function () {
+            base64String = reader.result;
+
+            let previewHtml = `<p>📄 ${file.name}</p>`;
+            previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn">Remove</button>`;
+
+            $('#preview').html(previewHtml);
+            $('#uploadBtn').hide();
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+$('#fileInput2').on('change', function () {
     const file = this.files[0];
     if (!file) return;
-    $("#fileInputerror").html('')
-    const reader = new FileReader();
 
-    reader.onload = function () {
-      pobbase64String = reader.result;
-      pobuploadedFileName = file.name;
+    $("#fileInputerror").html('');
+    pobuploadedFileName = file.name;
 
-      // Hide upload button
-      $('#uploadBtnpob').hide();
+    if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const img = new Image();
+            img.src = reader.result;
 
-      // Show preview
-      let previewHtml = '';
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800;
+                const scale = MAX_WIDTH / img.width;
 
-      if (file.type.startsWith('image/')) {
-        previewHtml = `<img src="${pobbase64String}" style="max-width:200px; display:block; margin-bottom:10px;">`;
-      } else {
-        previewHtml = `<p>📄 ${file.name}</p>`;
-      }
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scale;
 
-      // Add remove button
-      previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn2">Remove</button>`;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      $('#preview2').html(previewHtml);
-    };
+                // Compress image (JPEG, 70% quality)
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                pobbase64String = compressedBase64;
 
-    reader.readAsDataURL(file);
-  });
+                // Update preview
+                let previewHtml = `<img src="${compressedBase64}" style="max-width:200px; display:block; margin-bottom:10px;">`;
+                previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn2">Remove</button>`;
+
+                $('#preview2').html(previewHtml);
+                $('#uploadBtnpob').hide();
+            };
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // For PDF or other files
+        const reader = new FileReader();
+        reader.onload = function () {
+            pobbase64String = reader.result;
+
+            let previewHtml = `<p>📄 ${file.name}</p>`;
+            previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn2">Remove</button>`;
+
+            $('#preview2').html(previewHtml);
+            $('#uploadBtnpob').hide();
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+
+//   $('#fileInput').on('change', function () {
+//     const file = this.files[0];
+//     if (!file) return;
+//     $("#fileInputerror").html('')
+//     const reader = new FileReader();
+
+//     reader.onload = function () {
+//       base64String = reader.result;
+//       uploadedFileName = file.name;
+
+//       // Hide upload button
+//       $('#uploadBtn').hide();
+
+//       // Show preview
+//       let previewHtml = '';
+
+//       if (file.type.startsWith('image/')) {
+//         previewHtml = `<img src="${base64String}" style="max-width:200px; display:block; margin-bottom:10px;">`;
+//       } else {
+//         previewHtml = `<p>📄 ${file.name}</p>`;
+//       }
+
+//       // Add remove button
+//       previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn">Remove</button>`;
+
+//       $('#preview').html(previewHtml);
+//     };
+
+//     reader.readAsDataURL(file);
+//   });
+
+//    $('#fileInput2').on('change', function () {
+//     const file = this.files[0];
+//     if (!file) return;
+//     $("#fileInputerror").html('')
+//     const reader = new FileReader();
+
+//     reader.onload = function () {
+//       pobbase64String = reader.result;
+//       pobuploadedFileName = file.name;
+
+//       // Hide upload button
+//       $('#uploadBtnpob').hide();
+
+//       // Show preview
+//       let previewHtml = '';
+
+//       if (file.type.startsWith('image/')) {
+//         previewHtml = `<img src="${pobbase64String}" style="max-width:200px; display:block; margin-bottom:10px;">`;
+//       } else {
+//         previewHtml = `<p>📄 ${file.name}</p>`;
+//       }
+
+//       // Add remove button
+//       previewHtml += `<button class="btn btn-danger btn-sm" id="removeBtn2">Remove</button>`;
+
+//       $('#preview2').html(previewHtml);
+//     };
+
+//     reader.readAsDataURL(file);
+//   });
 
 
   // Remove handler
@@ -1019,8 +1126,8 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
 
    // Remove handler
   $(document).on('click', '#removeBtn2', function () {
-    base64String = "";
-    uploadedFileName = "";
+    pobbase64String = "";
+    pobuploadedFileName = "";
     $('#preview2').empty();
     $('#uploadBtnpob').show();
     $('#fileInput2').val(""); // Clear file input
