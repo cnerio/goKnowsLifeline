@@ -60,38 +60,51 @@ require APPROOT . '/views/inc/navbar.php';
     </div>
 </section>
 <?php require APPROOT . '/views/inc/footer.php'; ?>
+
 <script>
     let identityBase64 = '';
     let benefitBase64 = '';
 
     function previewAndConvert(inputId, previewId, setBase64Callback, clearBase64Callback) {
-        const input = document.getElementById(inputId);
-        const preview = document.getElementById(previewId);
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
 
-        input.addEventListener('change', function() {
-            const file = input.files[0];
-            if (!file) return;
+    input.addEventListener('change', function () {
+        const file = input.files[0];
+        if (!file) return;
 
-            // Clear previous preview
-            preview.innerHTML = '';
+        preview.innerHTML = '';
 
+        const ftype = file.type;
+        if (ftype.startsWith('image/')) {
+            const img = new Image();
             const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64String = e.target.result;
-                setBase64Callback(base64String);
 
-                let element;
-                if (file.type.startsWith('image/')) {
-                    element = document.createElement('img');
-                    element.classList.add('preview-img');
-                    element.src = base64String;
-                } else if (file.type === 'application/pdf') {
-                    element = document.createElement('p');
-                    element.textContent = `PDF selected: ${file.name}`;
-                } else {
-                    element = document.createElement('p');
-                    element.textContent = 'Unsupported file type.';
-                }
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+
+            img.onload = function () {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800;
+                const scaleSize = MAX_WIDTH / img.width;
+
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                // Compress the image to JPEG (you can change quality here)
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7); // 0.7 = 70% quality
+
+                // Send compressed base64 string
+                setBase64Callback(compressedBase64);
+
+                // Preview
+                const element = document.createElement('img');
+                element.classList.add('preview-img');
+                element.src = compressedBase64;
 
                 const removeBtn = document.createElement('button');
                 removeBtn.textContent = 'Remove';
@@ -108,8 +121,87 @@ require APPROOT . '/views/inc/navbar.php';
             };
 
             reader.readAsDataURL(file);
-        });
-    }
+        } else if (ftype === 'application/pdf') {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const base64String = e.target.result;
+                setBase64Callback(base64String);
+
+                const element = document.createElement('p');
+                element.textContent = `PDF selected: ${file.name}`;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Remove';
+                removeBtn.className = 'btn btn-sm btn-danger remove-btn';
+                removeBtn.type = 'button';
+                removeBtn.onclick = () => {
+                    input.value = '';
+                    preview.innerHTML = '';
+                    clearBase64Callback();
+                };
+
+                preview.appendChild(element);
+                preview.appendChild(removeBtn);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            const element = document.createElement('p');
+            element.textContent = 'Unsupported file type.';
+            preview.appendChild(element);
+        }
+    });
+}
+
+
+    // function previewAndConvert(inputId, previewId, setBase64Callback, clearBase64Callback) {
+    //     const input = document.getElementById(inputId);
+    //     const preview = document.getElementById(previewId);
+
+    //     input.addEventListener('change', function() {
+    //         const file = input.files[0];
+    //         const ftype = input.files[0].type;
+    //         if (!file) return;
+
+    //         // Clear previous preview
+    //         preview.innerHTML = '';
+
+    //         const reader = new FileReader();
+    //         reader.onload = function(e) {
+    //             const base64String = e.target.result;
+    //             setBase64Callback(base64String);
+
+    //             let element;
+    //             if (file.type.startsWith('image/')) {
+    //                 element = document.createElement('img');
+    //                 element.classList.add('preview-img');
+    //                 element.src = base64String;
+    //             } else if (file.type === 'application/pdf') {
+    //                 element = document.createElement('p');
+    //                 element.textContent = `PDF selected: ${file.name}`;
+    //             } else {
+    //                 element = document.createElement('p');
+    //                 element.textContent = 'Unsupported file type.';
+    //             }
+
+    //             const removeBtn = document.createElement('button');
+    //             removeBtn.textContent = 'Remove';
+    //             removeBtn.className = 'btn btn-sm btn-danger remove-btn';
+    //             removeBtn.type = 'button';
+    //             removeBtn.onclick = () => {
+    //                 input.value = '';
+    //                 preview.innerHTML = '';
+    //                 clearBase64Callback();
+    //             };
+
+    //             preview.appendChild(element);
+    //             preview.appendChild(removeBtn);
+    //         };
+            
+    //                 reader.readAsDataURL(file);
+            
+            
+    //     });
+    // }
 
     // Setup listeners for both file inputs
     previewAndConvert(
