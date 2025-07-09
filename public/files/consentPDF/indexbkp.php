@@ -46,9 +46,6 @@ if (isset($arrayPost['orderId'])) {
             $name = $row['first_name'] . " " . $row['second_name'];
             $first_name = $row['first_name'];
             $second_name = $row['second_name'];
-            $fname_initial = strtoupper(substr($row['first_name'], 0, 1));
-            $sname_initial = strtoupper(substr($row['second_name'], 0, 1));
-            $initials = $fname_initial . $sname_initial;
             $signature_text = $row['signature_text'];
             $date_created = date('mdY', strtotime($row['created_at']));
             $address = $row['address1'];
@@ -77,6 +74,11 @@ if (isset($arrayPost['orderId'])) {
 
             //$pdfPath = "../../uploads/".$row['customer_id']."/". $docName;
             $pdfPath = $_SERVER['DOCUMENT_ROOT']."/public/uploads/".$row['customer_id']."/". $docName;
+
+            $pdf = new Fpdi();
+
+            $pdf->AddPage();
+
             // switch ($company) {
             //     case "TERRACOM":
             //         $consentTemplate = "LifelineConsent_Terracom.pdf";
@@ -94,167 +96,83 @@ if (isset($arrayPost['orderId'])) {
             //         $consentTemplate = "";
             //         break;
             // }
-            // if($state == "CA"){
+            if($state == "CA"){
 
-            $pdf = new Fpdi();
-
-            $pdf->AddPage();
-
-            
-
-                    $consentTemplate = "AMBTNewConsentFormJuly25.pdf";
-            $pdf->setSourceFile($consentTemplate);
+                    $consentTemplate = "LifelineConsent_AMBTCA.pdf";
+                    $pdf->setSourceFile($consentTemplate);
                     $tplIdx = $pdf->importPage(1);
-                    $pdf->useTemplate($tplIdx, 2, 2, 213);
-
+                    $pdf->useTemplate($tplIdx, 2, 2, 213);                  
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(45, 120, $first_name);
-
-                    // $pdf->SetFont('Arial', '', 12);
-                    // $pdf->Text(45, 124, $middle_name);
-
+                    $pdf->Text(45,120, $first_name);
                     $pdf->SetFont('Arial', '', 12);
                     $pdf->Text(45, 128, $second_name);
-
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(45, 140, $month);
-
+                    $pdf->Text(45, 135, $month);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(73, 140, $day);
-
+                    $pdf->Text(73, 135,$day);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(95, 140, $year);
-
+                    $pdf->Text(95, 135, $year);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(165, 140, (($ssn != "") ? $ssn : $tribal_id));
-
+                    $pdf->Text(165, 135, (($ssn != "") ? $ssn : $tribal_id));                   
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(45, 158, $address);
-
+                    $pdf->Text(45, 152, $address);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(135, 158, $city);
-
+                    $pdf->Text(135, 152, $address2);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(45, 165, $address2);
-
+                    $pdf->Text(35, 158, $city);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(85, 165, $state);
-
+                    $pdf->Text(85, 158, $state);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(122, 165, $zipcode);
-
+                    $pdf->Text(122, 158, $zipcode);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(45, 185, $shipping_address1);
-
+                    $pdf->Text(45, 178, $shipping_address1);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(130, 185, $shipping_address2);
-
+                    $pdf->Text(130, 178, $shipping_address2);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(35, 192, $shipping_city);
-
+                    $pdf->Text(35, 185, $shipping_city);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(85, 192, $shipping_state);
-
+                    $pdf->Text(85, 185, $shipping_state);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(122, 192, $shipping_zipcode);
-
+                    $pdf->Text(122, 185, $shipping_zipcode);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(45, 198, $email);
-
+                    $pdf->Text(45, 192, $email);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(167, 198, $phone_number);
-
-                    $pdf->AddPage();
+                    $pdf->Text(167, 192, $phone_number);
+                    $pdf->AddPage(); 
                     $pdf->setSourceFile($consentTemplate);
                     $tplIdx = $pdf->importPage(2);
                     $pdf->useTemplate($tplIdx, 2, 2, 213);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 61, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 67, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 164, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 174, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 204, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 226, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 238, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 244, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 256, $initials);
-
-
-                    $pdf->AddPage();
+                    $pdf->AddPage(); 
                     $pdf->setSourceFile($consentTemplate);
                     $tplIdx = $pdf->importPage(3);
                     $pdf->useTemplate($tplIdx, 2, 2, 213);
-
+                    $pdf->AddPage(); 
+                    $pdf->setSourceFile($consentTemplate);
+                    $tplIdx = $pdf->importPage(4);
+                    $pdf->useTemplate($tplIdx, 2, 2, 213);
+                    $pdf->Text(55, 22, $signature_text);
                     $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 18, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 24, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 33, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 39, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 45, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 58, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 121, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 134, $initials);
-
-                    $pdf->SetFont('Arial', '', 12);
-                    $pdf->Text(17, 143, $initials);
-
-                    $pdf->Text(55, 170, $signature_text);
-                    $pdf->SetFont('Arial', '', 12);
-
-                    $pdf->Text(165, 170,  $date_created);
-
-                    $pdf->Output('F', $pdfPath);
+                    $pdf->Text(165, 22, $date_created);
                     //$pdf->Output('F', $pdfPath);
 
-                // }else{
-                //     $consentTemplate = "LifelineConsent_Torch.pdf";
+                }else{
+                    $consentTemplate = "LifelineConsent_Torch.pdf";
 
-                //     $pdf->setSourceFile($consentTemplate);
-                //     $tplIdx = $pdf->importPage(1);
-                //     $pdf->useTemplate($tplIdx, 2, 2, 213);
-                //     $pdf->SetFont('Arial', '', 12);
-                //     $pdf->Text(81, 17, $orderId);
-                //     $pdf->SetFont('Arial', '', 12);
-                //     $pdf->Text(81, 25, $first_name);
-                //     $pdf->SetFont('Arial', '', 12);
-                //     $pdf->Text(81, 35, $second_name);
-                //     $pdf->SetFont('Arial', '', 12);
-                //     $pdf->Text(25, 263, $signature_text);
-                //     $pdf->SetFont('Arial', '', 12);
-                //     $pdf->Text(168, 263, $date_created);
-                //    // $pdf->Output('F', $pdfPath);
-                // }
+                    $pdf->setSourceFile($consentTemplate);
+                    $tplIdx = $pdf->importPage(1);
+                    $pdf->useTemplate($tplIdx, 2, 2, 213);
+                    $pdf->SetFont('Arial', '', 12);
+                    $pdf->Text(81, 17, $orderId);
+                    $pdf->SetFont('Arial', '', 12);
+                    $pdf->Text(81, 25, $first_name);
+                    $pdf->SetFont('Arial', '', 12);
+                    $pdf->Text(81, 35, $second_name);
+                    $pdf->SetFont('Arial', '', 12);
+                    $pdf->Text(25, 263, $signature_text);
+                    $pdf->SetFont('Arial', '', 12);
+                    $pdf->Text(168, 263, $date_created);
+                   // $pdf->Output('F', $pdfPath);
+                }
 
                  $dir = dirname($pdfPath); // $outputPath is your full PDF path
                     if (!is_dir($dir)) {

@@ -419,34 +419,13 @@ class Enrolls extends Controller
 
   public function testprocess($orderId,$typeDoc)
   {
-     $customerData = $this->enrollModel->getCustomerbyOrderId($orderId);
-     //echo $orderId;
-     //echo "<br>";
-     //$getAllFilesR = $this->getallfilessaved($customerData[0]['customer_id']);
-    //getFiles($customerId,$filetype)
-
-    //print_r($getAllFilesR);
+    echo $orderId;
+    echo "<br>";
+    $customerData = $this->enrollModel->getCustomerbyOrderId($orderId);
     $this->APIService = new APIprocess();
-    //foreach($getAllFilesR as $records){
-      $response=$this->APIService->sendDocuments($customerData[0]['customer_id'],$customerData[0]['order_id'],$typeDoc,$this->enrollModel);
-      //echo $records['filepath'];
-    //}
-    print_r($response);
-    // $this->APIService = new APIprocess();
-    // $row = $this->APIService->getIdfile('G-TT3E0002',$this->enrollModel);
-    // //print_r($row);
-    // if($row){
-    //   // Read the image file into a binary string
-    // $imageData = file_get_contents($row['filepath']);
+    $response=$this->APIService->sendDocuments($customerData[0]['customer_id'],$customerData[0]['order_id'],$typeDoc,$this->enrollModel);
 
-    // // Encode the binary data to base64
-    // $base64 = base64_encode($imageData);
-    // //echo $base64;
-    // }else{
-    //   echo "File not found";
-    // }
-    //$row2 = $this->enrollModel->getCustomerData('G-SN3X0005');
-    //$this->sendNotification($row2[0]);
+    print_r($response);
   }
 
  public function getallfilessaved($customerId){
