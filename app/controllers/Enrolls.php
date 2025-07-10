@@ -121,14 +121,14 @@ class Enrolls extends Controller
           "order_step" => "Step 1",
           "URL" => $_POST['url'],
           "company" => $_POST['company'],
-          "utm_source" => (isset($_GET['utm_source'])) ? $_GET['utm_source'] : null,
-          "utm_medium" => (isset($_GET['utm_medium'])) ? $_GET['utm_medium'] : null,
-          "utm_campaign" => (isset($_GET['utm_campaign'])) ? $_GET['utm_campaign'] : null,
-          "utm_content" => (isset($_GET['utm_content'])) ? $_GET['utm_content'] : null,
-          "match_type" => (isset($_GET['match_type'])) ? $_GET['match_type'] : null,
-          "utm_adgroup" => (isset($_GET['utm_adgroup'])) ? $_GET['utm_adgroup'] : null,
-          "gclid" => (isset($_GET['gclid'])) ? $_GET['gclid'] : null,
-          "fbclid" => (isset($_GET['fbclid'])) ? $_GET['fbclid'] : null
+          "utm_source" => (isset($_POST['utm_source'])) ? $_POST['utm_source'] : null,
+          "utm_medium" => (isset($_POST['utm_medium'])) ? $_POST['utm_medium'] : null,
+          "utm_campaign" => (isset($_POST['utm_campaign'])) ? $_POST['utm_campaign'] : null,
+          "utm_content" => (isset($_POST['utm_content'])) ? $_POST['utm_content'] : null,
+          "match_type" => (isset($_POST['match_type'])) ? $_POST['match_type'] : null,
+          "utm_adgroup" => (isset($_POST['utm_adgroup'])) ? $_POST['utm_adgroup'] : null,
+          "gclid" => (isset($_POST['gclid'])) ? $_POST['gclid'] : null,
+          "fbclid" => (isset($_POST['fbclid'])) ? $_POST['fbclid'] : null
         ];
         if($customer_id){
           $data['customer_id']=$customer_id;
