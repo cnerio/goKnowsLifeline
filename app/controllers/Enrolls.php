@@ -101,6 +101,9 @@ class Enrolls extends Controller
         }else{
           $customer_id =null;
         };
+        $full_url = $_POST['url'];
+        parse_str(parse_url($full_url, PHP_URL_QUERY), $params);
+        $utms = json_encode($params);
         $data = [
           "first_name" => trim(ucfirst(strtolower($_POST['firstname']))),
           "second_name" => trim(ucfirst(strtolower($_POST['lastname']))),
@@ -119,8 +122,9 @@ class Enrolls extends Controller
           "shipping_state" => (isset($_POST['shipstate'])) ? $_POST['shipstate'] : null,
           "shipping_zipcode" => (isset($_POST['shipzipcode'])) ? $_POST['shipzipcode'] : null,
           "order_step" => "Step 1",
-          "URL" => $_POST['url'],
+          "URL" => $full_url,
           "company" => $_POST['company'],
+          "utms"=>$utms,
           "utm_source" => (isset($_POST['utm_source'])) ? $_POST['utm_source'] : null,
           "utm_medium" => (isset($_POST['utm_medium'])) ? $_POST['utm_medium'] : null,
           "utm_campaign" => (isset($_POST['utm_campaign'])) ? $_POST['utm_campaign'] : null,
@@ -416,8 +420,20 @@ class Enrolls extends Controller
     $this->view("enrolls/compress",$data);
   }
 
+  public function test($customer_id){
+    $row2 = $this->enrollModel->getCustomerData($customer_id);
+    $jsonString = $row2[0]['utms'];
+    $data = json_decode($jsonString, true);
 
-  public function testprocess($orderId,$typeDoc)
+    // Loop through the array
+    foreach ($data as $item) {
+        // Extract values and join them with hyphens
+        $result = $item. '-';
+        echo $result . PHP_EOL;
+    }
+  }
+
+  public function sendDocumentsAPI($orderId,$typeDoc)
   {
     echo $orderId;
     echo "<br>";

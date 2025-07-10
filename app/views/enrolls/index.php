@@ -5,6 +5,8 @@ require APPROOT . '/views/inc/navbar.php';
 
 $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
 $full_url = $protocol . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+
 $utm_source = isset($_GET['utm_source']) ? $_GET['utm_source'] : null;
 $utm_medium = isset($_GET['utm_medium']) ? $_GET['utm_medium'] : null;
 $utm_campaign = isset($_GET['utm_campaign']) ? $_GET['utm_campaign'] : null;
@@ -537,9 +539,11 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script>
     let columnId;
+  
     $(document).ready(function() {
         $(".phoneUs").mask('(000) 000-0000');
         $(".zipcode").mask('00000');
+        
     });
     var form = $("#enrollForm");
     form.validate({
@@ -1234,20 +1238,4 @@ $(document).ready(function () {
   }, "City or State does not match to your Zip Code.");
 })
 
-    // function takescreenshot(){
-    //     html2canvas(document.body).then(function(canvas) {
-    //     // Get base64 string
-    //     const base64image = canvas.toDataURL("image/png");
-
-    //     // Show in console
-    //     //console.log(base64image);
-
-    //     // (Optional) You could send it to a server using fetch/ajax or display it
-    //     // Example: show the image on screen
-    //     // const img = document.createElement("img");
-    //     // img.src = base64image;
-    //     // document.body.appendChild(img);
-    //     return base64image;
-    // });
-    // }
 </script>

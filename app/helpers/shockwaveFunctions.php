@@ -543,35 +543,19 @@ function lifeline_payload($data, $credentials,$packages)
 				$providerId = $item['providerId'];
 		}
 	}
-	// //print("<pre>" . print_r($configs, true) . "</pre>");
-	// if (!empty($data['phone_type']) && $data['phone_type'] == 'iOS') {
-	// 	//$packageID = '1602';
-	// 	$packageID = ($data['state'] == $packages['state']) ? '1605' : '1602';
-	// } else {
-	// 	//$packageID = !empty($configs['packages']['tribal']) ? $configs['packages']['tribal'] : $configs['packages']['nontribal'];
-	// 	$packageID = $credentials['packageId'];
-	// }
-	
 
-	/*
-	if (is_array($configs['packages']) && empty($configs['packages'])) {
-		
-		if ($data['phone_type'] == 'iOS') {
-			$packageID = ($data['state'] == 'CA') ? '1605' : '1602';
-		}else {
-			$packageID = $configs['packages']['nontribal'];
-		}
-
-	}else{
-		$packageID = 'NO-Package';
-		
-	}*/
-    //$carrier="TMO";
-
-	//$providerId = ($carrier === "TMO") ? 100001 : 100003;
+	$jsonString = $data['utms'];
+    $utms = json_decode($jsonString, true);
+	$utm_values="";
+    // Loop through the array
+    foreach ($utms as $item) {
+        // Extract values and join them with hyphens
+        $utm_values.= $item. '-';
+       // echo $result . PHP_EOL;
+    }
    
    
-        $utm_values = $data['utm_source'] . '-' . $data['utm_medium'] . '-' . $data['utm_campaign'] . '-' . $data['utm_content'] . '-' . $data['match_type'] . '-' . $data['utm_adgroup'];
+    //$utm_values = $data['utm_source'] . '-' . $data['utm_medium'] . '-' . $data['utm_campaign'] . '-' . $data['utm_content'] . '-' . $data['match_type'] . '-' . $data['utm_adgroup'];
    
 	$phone = $data['phone_number'];
 	$author = $credentials['author'];
