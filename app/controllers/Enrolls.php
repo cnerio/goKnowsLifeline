@@ -273,6 +273,16 @@ class Enrolls extends Controller
     }
   }
 
+  public function tryagain($customer_id){
+    $this->APIService = new APIprocess();
+        $result = $this->APIService->shockwaveProcess($customer_id, $this->enrollModel);
+
+        //$row2 = $this->enrollModel->getCustomerData($customer_id);
+        //$this->sendNotification($row2[0]);
+
+        echo json_encode($result);
+  }
+
   public function getdocuments($orderId64=null){
 
     $data = [
@@ -438,6 +448,7 @@ class Enrolls extends Controller
     echo $orderId;
     echo "<br>";
     $customerData = $this->enrollModel->getCustomerbyOrderId($orderId);
+    //print_r($customerData);
     $this->APIService = new APIprocess();
     $response=$this->APIService->sendDocuments($customerData[0]['customer_id'],$customerData[0]['order_id'],$typeDoc,$this->enrollModel);
 

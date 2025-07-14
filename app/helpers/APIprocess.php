@@ -15,11 +15,6 @@ Class APIprocess{
         $packages = $enrollModel->getPackages();
     
         $createResponse=create_shockwave_account($customerData[0],$credentials[0],$packages);
-        // $createResponse['order_id']="02072025";
-        // $createResponse['account']="12345";
-        // $createResponse['acp_status']="TEST";
-        // $createResponse['status']="success";
-        // $createResponse['status_text']="This is a test";
         $processData['process_status']="addSubscriberOrder API";
         $enrollModel->updateData($processData,'lifeline_records');
         
@@ -44,58 +39,10 @@ Class APIprocess{
               ];
               $enrollModel->updateData($dataOrder,"lifeline_records");
               $row = $enrollModel->getCustomerData($customerId);
-              
-              //Checking id file, process to send to shockwave
-              // $checkID = $this->getSavedfiles($customerId,$enrollModel,"ID");
-              // if($checkID){
-              //   // Read the image file into a binary string
-              //   $imageData = file_get_contents($checkID['filepath']);
-              //   $filename = basename($checkID['filepath']);
-              //   // Encode the binary data to base64
-              //   $IDbase64 = base64_encode($imageData);
-              //   $uploadId=UploadDocument($credentials[0], $row[0]['order_id'], $customerId.".png", $IDbase64, '100001');
-              //   if($uploadId['status']=="success"){
-              //     $saveCreateIDLog=[
-              //       "customer_id"=>$customerId,
-              //       "url"=>$uploadId['url'],
-              //       "request"=>$uploadId['request'],
-              //       "response"=>json_encode($uploadId['response']),
-              //       "title"=>$uploadId['title']
-              //     ];
-              //     $enrollModel->saveData($saveCreateIDLog,'lifeline_apis_log');
-              //     $fileId = ["id_lifeline_doc"=>$checkID['id_lifeline_doc'] ,"to_unavo"=>1];
-              //    // $enrollModel->saveData($fileId,'lifeline_documents');
-              //    $enrollModel->updateDocStatus($fileId,'lifeline_documents');
-              //   }
-              // }
 
               $IdFileResult = $this->sendDocuments($customerId,$row[0]['order_id'],"ID",$enrollModel);
               $processData['process_status']=$IdFileResult['msg'];
               $enrollModel->updateData($processData,'lifeline_records');
-
-              //Checking POB file, process to send toshockwave
-              // $checkPOB = $this->getSavedfiles($customerId,$enrollModel,"POB");
-              // if($checkPOB){
-              //   // Read the image file into a binary string
-              //   $imageDatapob = file_get_contents($checkPOB['filepath']);
-              //   $filenamepob = basename($checkPOB['filepath']);
-              //   // Encode the binary data to base64
-              //   $POBbase64 = base64_encode($imageDatapob);
-              //   $uploadPOB=UploadDocument($credentials[0], $row[0]['order_id'], $filenamepob, $POBbase64, '100000');
-              //   if($uploadPOB['status']=="success"){
-              //     $saveCreatePOBLog=[
-              //       "customer_id"=>$customerId,
-              //       "url"=>$uploadPOB['url'],
-              //       "request"=>$uploadPOB['request'],
-              //       "response"=>json_encode($uploadPOB['response']),
-              //       "title"=>$uploadPOB['title']
-              //     ];
-              //     $enrollModel->saveData($saveCreatePOBLog,'lifeline_apis_log');
-              //     $fileId = ["id_lifeline_doc"=>$checkPOB['id_lifeline_doc'],"to_unavo"=>1];
-              //    // $enrollModel->saveData($fileId,'lifeline_documents');
-              //    $enrollModel->updateDocStatus($fileId ,'lifeline_documents');
-              //   }
-              // }
               $POBFileResult = $this->sendDocuments($customerId,$row[0]['order_id'],"POB",$enrollModel);
               $processData['process_status']=$POBFileResult['msg'];
               $enrollModel->updateData($processData,'lifeline_records');
@@ -119,41 +66,10 @@ Class APIprocess{
               $ConsentFileResult = $this->sendDocuments($customerId,$row[0]['order_id'],"Consent",$enrollModel);
               $processData['process_status']=$ConsentFileResult['msg'];
               $enrollModel->updateData($processData,'lifeline_records');
-              // $fileData = [
-              //   "customer_id"=>$customerData[0]['customer_id'],
-              //   "filepath"=>$consentFile64['URL'],
-              //   "type_doc"=>"Consent"
-              // ];
-              // $uploadConsent=UploadDocument($credentials[0], $row[0]['order_id'], $consentFile64['docName'], $consentFile64['pdfBase64'], '100025');
-              // $processData['process_status']="submitting Consent API";
-              // $enrollModel->updateData($processData,'lifeline_records');
-              // $saveCreateLog=[
-              //   "customer_id"=>$customerId,
-              //   "url"=>$uploadConsent['url'],
-              //   "request"=>$uploadConsent['request'],
-              //   "response"=>json_encode($uploadConsent['response']),
-              //   "title"=>$uploadConsent['title']
-              // ];
-              // $enrollModel->saveData($saveCreateLog,'lifeline_apis_log');
-              // if($uploadConsent['status']=="success"){
-                
-              //   $fileData['to_unavo']='1';
-              //   $result=[
-              //     "status"=>"success",
-              //     "msg"=>"Consent file submitted"
-              //   ];
-              // }else{
-              //     $result=[
-              //     "status"=>"success",
-              //     "msg"=>"Something went wrong uploading your file"
-              //   ];
-              // }
-              // $fileData['statusScreen']=($enrollModel->saveData($fileData,'lifeline_documents'))?true:false;
-              // $dataOrder=[
-              //   "customer_id"=>$customerId,
-              //   "process_status"=>$result['msg']
-              // ];
-              // $enrollModel->updateData($dataOrder,"lifeline_records");
+                $result=[
+                  "status"=>"success",
+                  "msg"=>"Order Submitted and Consent file submitted"
+                ];
               
             }else{
               //echo "base64 error";
@@ -174,12 +90,12 @@ Class APIprocess{
               "account"=>$createResponse['account'],
               "acp_status"=>$createResponse['acp_status'],
               "status_text"=>$createResponse['status_text'],
-              "process_status"=>"Shockwave process success"
+              "process_status"=>"Shockwave process success but Order id O"
             ];
             $enrollModel->updateData($dataOrder,"lifeline_records");
               $result = [
               "status"=>"success",
-              "msg"=>"Shockwave process Success"
+              "msg"=>"Shockwave process Success but Order id O"
             ];
           }
           //print_r($result);
