@@ -1,4 +1,9 @@
-<?php require APPROOT . '/views/inc/header.php'; ?>
+<?php 
+$queryString = $_SERVER['QUERY_STRING']; // e.g., "utm_source=google&utm_medium=cpc"
+
+//echo $queryString;
+
+require APPROOT . '/views/inc/header.php'; ?>
 <?php 
 $apply=true;
 require APPROOT . '/views/inc/navbar.php'; 
@@ -11,7 +16,7 @@ require APPROOT . '/views/inc/navbar.php';
                     <div class="text-center">
                         <h1 class="display-4 fw-bold">Get your <span class="underline">FREE</span> Government Wireless Service&nbsp;now!.</h1>
                         <p class="fs-5 text-muted mb-2">High-Speed Data, Unlimited Talk & Text.</p>
-                        <div class="my-2"><a class="btn btn-primary fs-5 py-2 px-4" role="button" href="<?php echo URLROOT; ?>/enrolls">Apply Now!</a></div>
+                        <div class="my-2"><a class="btn btn-primary fs-5 py-2 px-4" role="button" href="<?php echo URLROOT; ?>/enrolls?<?php echo $queryString; ?>">Apply Now!</a></div>
                     </div>
                 </div>
                 <div class="col-md-6 mx-auto">
@@ -50,7 +55,7 @@ require APPROOT . '/views/inc/navbar.php';
                     <h2 class="fw-bold text-secondary mb-2"> Do you receive government benefits?</h2>
                     <p class="mb-0">Just fill out this enrollment form.</p>
                 </div>
-                <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="<?php echo URLROOT; ?>/enrolls">Apply Now!</a></div>
+                <div class="my-2"><a class="btn btn-light fs-5 py-2 px-4" role="button" href="<?php echo URLROOT; ?>/enrolls?<?php echo $queryString; ?>">Apply Now!</a></div>
             </div>
         </div>
     </section>
