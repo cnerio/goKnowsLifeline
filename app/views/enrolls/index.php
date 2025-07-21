@@ -38,6 +38,14 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                                     </div>
                                 </div>
                             </div>
+                            <!-- <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="">Birth Date</label>
+                                        <input type="date" id="dob" name="dob" class="form-select">
+                                    </div>
+                                </div>
+                            </div> -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -49,9 +57,24 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                                     <div class="form-group">
                                         <label for="dob">Birth Date <span class="requiredmark">*</span></label>
                                         <div class="input-group">
-                                            <input type="text" id="dobM" name="dobM" class="form-control dob-group" maxlength="2" pattern="[0-9]*" placeholder="MM">
-                                            <input type="text" id="dobD" name="dobD" class="form-control dob-group" maxlength="2" pattern="[0-9]*" placeholder="DD">
-                                            <input type="text" id="dobY" name="dobY" class="form-control dob-group" maxlength="4" pattern="[0-9]*" placeholder="YYYY">
+                                            <!-- <input type="text" id="dobM" name="dobM" class="form-control dob-group" maxlength="2" pattern="[0-9]*" placeholder="MM"> -->
+                                             <select name="dobM" id="dobM" class="form-select dob-group">
+                                                <option value="">Month</option>
+                                                <option value="01">January</option>
+                                                <option value="02">February</option>
+                                                <option value="03">March</option>
+                                                <option value="04">April</option>
+                                                <option value="05">May</option>
+                                                <option value="06">June</option>
+                                                <option value="07">July</option>
+                                                <option value="08">August</option>
+                                                <option value="09">September</option>
+                                                <option value="10">October</option>
+                                                <option value="11">November</option>
+                                                <option value="12">December</option>
+                                             </select>
+                                            <input type="text" id="dobD" name="dobD" class="form-control dob-group" maxlength="2" pattern="[0-9]*" placeholder="Day">
+                                            <input type="text" id="dobY" name="dobY" class="form-control dob-group" maxlength="4" pattern="[0-9]*" placeholder="Year">
                                         </div>
                                         <div class="dob-errors">
                                             <label id="dobM-error" class="error" for="dobM"></label>
@@ -308,7 +331,7 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="eligibility_program">Select Government Program</label>
+                                        <label for="eligibility_program">Select Government Program <span class="requiredmark">*</span></label>
                                         <select name="eligibility_program" id="eligibility_program" class="form-control form-control-lg">
 
                                             <!-- <option value="">Select..</option>
@@ -432,7 +455,10 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                             <div class="row mb-2">
                                 <div class="col-md-12">
                                     <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID <span class="requiredmark">*</span></span>
-                                    <br><label id="fileInputolderror" style="display:none;" class="error" for="fileInput"></label>
+                                    <br>
+                                    <span><b>Required</b></span>
+                                    <br>
+                                    <label id="fileInputerror" style="display:none;" class="error" for="fileInput"></label>
                                     <input type="file" name="fileInput" id="fileInput" accept="image/*,application/pdf,.doc,.docx" capture="camera" style="display: none;" />
                                     <div id="preview"></div>
                                 </div>
@@ -440,8 +466,11 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <span class="btn btn-lg btn-primary" id="uploadBtnpob">Click to upload your Proof of Benefit <span class="requiredmark">*</span></span>
-                                    <br><label id="fileInputerror" style="display:none;" class="error" for="fileInput2"></label>
+                                    <!-- <span class="btn btn-lg btn-primary" id="uploadBtnpob">Click to upload your Proof of Benefit <span class="requiredmark">*</span></span> -->
+                                    <span class="btn btn-lg btn-primary" id="uploadBtnpob">Click to upload your Proof of Benefit </span>
+                                    <br>
+                                    <span><b>Not Required</b></span>
+                                    <!-- <br><label id="fileInputerror" style="display:none;" class="error" for="fileInput2"></label> -->
                                     <input type="file" name="fileInput2" id="fileInput2" accept="image/*,application/pdf,.doc,.docx" capture="camera" style="display: none;" />
                                     <div id="preview2"></div>
                                 </div>
@@ -543,6 +572,10 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
     $(document).ready(function() {
         $(".phoneUs").mask('(000) 000-0000');
         $(".zipcode").mask('00000');
+        const today = new Date();
+        const eighteenYearsAgo = new Date(today);
+        eighteenYearsAgo.setFullYear(today.getFullYear() - 18);   
+        document.getElementById("dob").setAttribute("max", eighteenYearsAgo.toISOString().split("T"));   
         
     });
     var form = $("#enrollForm");
@@ -722,7 +755,7 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                     //benefitProgram = (benefitProgram=="")?$("#eligibility_program").val():benefitProgram;
                     //console.log(base64String)
                     //console.log(pobbase64String)
-                    if(base64String && pobbase64String){
+                    if(base64String){
                         $("#fileInputerror").hide()
                         $("#fileInputerror").html("")
                         $.ajax({
@@ -761,7 +794,8 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                         });
                     }else{
                         $("#fileInputerror").show()
-                        $("#fileInputerror").html('File ID and Proof of Benefit are required, you must upload your files')
+                        //$("#fileInputerror").html('File ID and Proof of Benefit are required, you must upload your files')
+                        $("#fileInputerror").html('File ID is required, you must upload your files')
                         
                     }
 
