@@ -458,9 +458,10 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                             </div>
                             <div class="row mb-2">
                                 <div class="col-md-12">
-                                    <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID <span class="requiredmark">*</span></span>
+                                    <!-- <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID <span class="requiredmark">*</span></span> -->
+                                    <span class="btn btn-lg btn-primary" id="uploadBtn">Click to upload your government ID</span>
                                     <br>
-                                    <span><b>Required</b></span>
+                                    <span><b>Not Required</b></span>
                                     <br>
                                     <label id="fileInputerror" style="display:none;" class="error" for="fileInput"></label>
                                     <input type="file" name="fileInput" id="fileInput" accept="image/*,application/pdf,.doc,.docx" capture="camera" style="display: none;" />
@@ -759,7 +760,7 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                     //benefitProgram = (benefitProgram=="")?$("#eligibility_program").val():benefitProgram;
                     //console.log(base64String)
                     //console.log(pobbase64String)
-                    if(base64String){
+                    // if(base64String){
                         $("#fileInputerror").hide()
                         $("#fileInputerror").html("")
                         $.ajax({
@@ -796,12 +797,12 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
                                 alert("Error saving step " + currentIndex);
                             }
                         });
-                    }else{
-                        $("#fileInputerror").show()
-                        //$("#fileInputerror").html('File ID and Proof of Benefit are required, you must upload your files')
-                        $("#fileInputerror").html('File ID is required, you must upload your files')
+                    // }else{
+                    //     $("#fileInputerror").show()
+                    //     //$("#fileInputerror").html('File ID and Proof of Benefit are required, you must upload your files')
+                    //     $("#fileInputerror").html('File ID is required, you must upload your files')
                         
-                    }
+                    // }
 
                     
                 }
