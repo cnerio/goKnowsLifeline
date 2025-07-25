@@ -29,6 +29,10 @@ Class APIprocess{
         if($createResponse['status']=="success"){
           
           if($createResponse['order_id']>0){
+            $folder = "../public/uploads/".$customerId."/";
+                if (!is_dir($folder)) {
+                mkdir($folder, 0755, true);
+            }
             $dataOrder=[
                 "customer_id"=>$customerId,
                 "order_id"=>$createResponse['order_id'],
