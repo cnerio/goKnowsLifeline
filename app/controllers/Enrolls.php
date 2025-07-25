@@ -431,16 +431,24 @@ class Enrolls extends Controller
   }
 
   public function test($customer_id){
-    $row2 = $this->enrollModel->getCustomerData($customer_id);
-    $jsonString = $row2[0]['utms'];
-    $data = json_decode($jsonString, true);
-
-    // Loop through the array
-    foreach ($data as $item) {
-        // Extract values and join them with hyphens
-        $result = $item. '-';
-        echo $result . PHP_EOL;
+    echo $customer_id;
+    $this->APIService = new APIprocess();
+    $row = $this->APIService->getSavedfiles($customer_id,$this->enrollModel,'ID');
+    if($row){
+      echo "GET FILE";
+    }else{
+      echo "FILE NOT FOUND";
     }
+    // $row2 = $this->enrollModel->getCustomerData($customer_id);
+    // $jsonString = $row2[0]['utms'];
+    // $data = json_decode($jsonString, true);
+
+    // // Loop through the array
+    // foreach ($data as $item) {
+    //     // Extract values and join them with hyphens
+    //     $result = $item. '-';
+    //     echo $result . PHP_EOL;
+    // }
   }
 
   public function sendDocumentsAPI($orderId,$typeDoc)
@@ -543,6 +551,43 @@ class Enrolls extends Controller
     }
 
     print_r($row);
+  }
+
+  public function consentProcess($orderId,$customerId){
+    $this->APIService = new APIprocess();
+    $consentFile64=$this->APIService->getConsentFile($orderId);
+            //$consentFile64 = getConsent64($row[0]);
+            print_r($consentFile64);
+             $processData['customer_id']=$customerId;
+              $processData['process_status']="generating consent File";
+              $this->enrollModel->updateData($processData,'lifeline_records');
+            // exit();
+            if($consentFile64['status']=="success"){
+              $fileData = [
+                 "customer_id"=>$customerId,
+                 "filepath"=>$consentFile64['URL'],
+                 "type_doc"=>"Consent"
+               ];
+               $this->enrollModel->saveData($fileData,'lifeline_documents');
+              $ConsentFileResult = $this->APIService->sendDocuments($customerId,$orderId,"Consent",$this->enrollModel);
+              $processData['process_status']=$ConsentFileResult['msg'];
+              $this->enrollModel->updateData($processData,'lifeline_records');
+                $result=[
+                  "status"=>"success",
+                  "msg"=>"Order Submitted and Consent file submitted"
+                ];
+              
+            }else{
+              //echo "base64 error";
+              $result=[
+                "status"=>"success",
+                "msg"=>"We couldn't create a consent file"
+              ];
+               $processData['process_status']="Couldn't create a consent file";
+              $this->enrollModel->updateData($processData,'lifeline_records');
+            }
+
+            print_r($result);
   }
 
   public function getConsentFile($orderId)

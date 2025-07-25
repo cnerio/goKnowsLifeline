@@ -40,17 +40,7 @@ Class APIprocess{
               $enrollModel->updateData($dataOrder,"lifeline_records");
               $row = $enrollModel->getCustomerData($customerId);
 
-              $IdFileResult = $this->sendDocuments($customerId,$row[0]['order_id'],"ID",$enrollModel);
-              $processData['process_status']=$IdFileResult['msg'];
-              $enrollModel->updateData($processData,'lifeline_records');
-              $POBFileResult = $this->sendDocuments($customerId,$row[0]['order_id'],"POB",$enrollModel);
-              $processData['process_status']=$POBFileResult['msg'];
-              $enrollModel->updateData($processData,'lifeline_records');
-
-
-              
-
-            $consentFile64=$this->getConsentFile($row[0]['order_id']);
+              $consentFile64=$this->getConsentFile($row[0]['order_id']);
             //$consentFile64 = getConsent64($row[0]);
             // print_r($consentFile64);
               $processData['process_status']="generating consent File";
@@ -80,6 +70,26 @@ Class APIprocess{
                $processData['process_status']="Couldn't create a consent file";
               $enrollModel->updateData($processData,'lifeline_records');
             }
+
+              $checkId = $this->getSavedfiles($customerId,$enrollModel,'ID');
+              if($checkId){
+                //echo "GET FILE";
+                $IdFileResult = $this->sendDocuments($customerId,$row[0]['order_id'],"ID",$enrollModel);
+                $processData['process_status']=$IdFileResult['msg'];
+                $enrollModel->updateData($processData,'lifeline_records');
+              }
+
+              $checkPOB = $this->getSavedfiles($customerId,$enrollModel,'POB');
+              if($checkPOB){
+              
+              $POBFileResult = $this->sendDocuments($customerId,$row[0]['order_id'],"POB",$enrollModel);
+              $processData['process_status']=$POBFileResult['msg'];
+              $enrollModel->updateData($processData,'lifeline_records');
+
+              }
+              
+
+            
             
             //print_r($result);
           }else{
