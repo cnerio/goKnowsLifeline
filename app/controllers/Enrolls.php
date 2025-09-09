@@ -116,6 +116,7 @@ class Enrolls extends Controller
           "city" => trim(ucfirst(strtolower($_POST['city']))),
           "state" => $_POST['state'],
           "zipcode" => $_POST['zipcode'],
+          "typeAddress" => $_POST['typeAddress'],
           "shipping_address1" => (isset($_POST['shipaddress1']) ? $_POST['shipaddress1'] : null),
           "shipping_address2" => (isset($_POST['shipaddess2'])) ? $_POST['shipaddess2'] : null,
           "shipping_city" => (isset($_POST['shipcity'])) ? $_POST['shipcity'] : null,
