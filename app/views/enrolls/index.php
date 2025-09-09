@@ -647,6 +647,9 @@ $fbclid = isset($_GET['fbclid']) ? $_GET['fbclid'] : null
             fileInput: {
                 required: true
             },
+            typeAddress:{
+                required:true
+            },
             anotheradult:{
                 required: true
                 },
